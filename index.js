@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 
 'use strict';
-const cli = require('./meow.js').getCli();
+const cli = require('./src/meow.js').getCli();
 
 
 switch(cli.input[0]) {
 	case "init":
 		console.log("Init")
-		require("./init.js").init()
+		require("./src/actions/init.js").init()
 		break
 	case "build":
-		require("./build.js").build()
+		require("./src/actions/build.js").build()
 		break;
 	case "create":
-		require("./create.js").create(cli.input[1])
+		require("./src/actions/create.js").create(cli.input[1])
 		break
 	default:
 		console.log(`No command named ${cli.input[0]}`)

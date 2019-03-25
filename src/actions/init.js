@@ -2,10 +2,12 @@
 
 const fs = require('fs');
 const unzip = require('unzip');
+const path = require('path');
 
 module.exports = {
 	init: function() {
-		return fs.createReadStream(`${__dirname}/data/app.zip`)
+		var scriptDir = path.dirname(require.main.filename);
+		return fs.createReadStream(`${scriptDir}/data/app.zip`)
 			.pipe(unzip.Extract({ path: '.' }));
 	}
 }

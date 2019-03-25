@@ -122,7 +122,6 @@ async function functionBuildFolder(functionName, dependencies) {
 	 if (err) {
 	   return console.error(err);
 	 }
-	 console.log('done!');
 
 	 zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
 	});

@@ -1,0 +1,24 @@
+{
+  "name": "script",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "del": "^4.0.0",
+    "folder-zip-sync": "^1.0.5",
+    "js-yaml": "^3.13.0",
+    "meow": "^5.0.0",
+    "ncp": "^2.0.0",
+    "node-option": "0.0.6",
+    "unzip": "^0.1.11"
+  },
+  "bin": {
+    "samy": "./index.js"
+  }
+}

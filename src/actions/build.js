@@ -1,7 +1,6 @@
 'use strict';
 
 const Q = require('q');
-// const fs = require('fs');
 const fs = require('fs-extra')
 const zipFolder = require('folder-zip-sync')
 const { readdirSync, statSync } = require('fs')
@@ -11,7 +10,6 @@ const Selector = require('node-option')
 const del = require('del')
 var dirsum = require('dirsum');
 var chalk = require('chalk');
-
 
 const appDir = `${process.cwd()}/app`
 const buildDir = `${process.cwd()}/.build`
@@ -146,8 +144,10 @@ async function functionBuildFolder(functionName, dependencies) {
 	// Delete the template folder in the function build folder
 	await del([`${functionBuildFolder}/template.yaml`])
 
-	const newHash = await dirsumPromise(functionAppFolder)
-	const oldHash = await getHashesFromBuildFolder(functionName)
+	const hashUtil = require("./build/hash_util.js")
+
+	const newHash = await hashUtil.calculateHashForDirectoy(functionBuildFolder)
+	const oldHash = await hashUtil.getHashesFromBuildFolder(functionName)
 
 	if (newHash.total != oldHash.total) {
 		console.log(chalk.green("(m) code"))
@@ -155,49 +155,11 @@ async function functionBuildFolder(functionName, dependencies) {
 			console.log(chalk.green("(m) requirements"))
 		}
 
-		await putHashesForFunction(functionName, newHash)
+		await hashUtil.putHashesForFunction(functionName, newHash)
 
 		zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
 	}
 	else {
 		console.log(chalk.blueBright("(#) no changes detected"));
 	}
-}
-
-function dirsumPromise(dir) {
-	var deferred = Q.defer();
-	dirsum.digest(dir, 'sha1', function(err, hashes) {
-		deferred.resolve({
-			requirements: hashes.files["requirements.txt"],
-			total: hashes.hash
-		})
-	})
-
-	return deferred.promise
-}
-
-const installHashFilename = "install.txt"
-const totalHashFilename = "total.txt"
-
-
-async function getHashesFromBuildFolder(functionName) {
-	var installHash = undefined
-	var totalHash = undefined
-
-	try {
-		installHash = fs.readFileSync(`${buildDir}/.hash/${functionName}_${installHashFilename}`, 'utf8');
-		totalHash = fs.readFileSync(`${buildDir}/.hash/${functionName}_${totalHashFilename}`, 'utf8');
-	}
-	catch (e) {
-	}
-
-	return {
-		requirements: installHash,
-		total: totalHash
-	}
-}
-
-async function putHashesForFunction(functionName, hashes) {
-	fs.writeFileSync(`${buildDir}/.hash/${functionName}_${installHashFilename}`, hashes.requirements)
-	fs.writeFileSync(`${buildDir}/.hash/${functionName}_${totalHashFilename}`, hashes.total)
 }

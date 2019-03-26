@@ -65,7 +65,7 @@ async function parseOptionResults(results) {
 		const dep = await getDependencies(`${results[i]}/function.py`)
 		dep.shift()
 
-		console.log(chalk.yellow(`${results[i]}`) + `: ${dep.length} common dependencies`)
+		console.log(chalk.yellow(`${results[i]}:`) + chalk.bold(` ${dep.length}`) + ` common dependencies`)
 
 		await populateFunctionCommonFolder(results[i], dep)
 
@@ -137,6 +137,7 @@ async function functionBuildFolder(functionName, dependencies) {
 	const functionBuildFolder = `${buildDir}/${functionName}`
 	const functionAppFolder = `${appDir}/${functionName}`
 
+	await fs.mkdirSync(`${buildDir}/.hash`, { recursive: true })
 	await fs.mkdirSync(functionBuildFolder, { recursive: true })
 	await del([functionBuildFolder]);
 	await fs.copy(`${appDir}/${functionName}`, functionBuildFolder)
@@ -168,8 +169,8 @@ function dirsumPromise(dir) {
 	return deferred.promise
 }
 
-const installHashFilename = "install_hash.txt"
-const totalHashFilename = "total_hash.txt"
+const installHashFilename = "install.txt"
+const totalHashFilename = "total.txt"
 
 
 async function getHashesFromBuildFolder(functionName) {
@@ -177,8 +178,8 @@ async function getHashesFromBuildFolder(functionName) {
 	var totalHash = undefined
 
 	try {
-		installHash = fs.readFileSync(`${buildDir}/.${functionName}_${installHashFilename}`, 'utf8');
-		totalHash = fs.readFileSync(`${buildDir}/.${functionName}_${totalHashFilename}`, 'utf8');
+		installHash = fs.readFileSync(`${buildDir}/.hash/${functionName}_${installHashFilename}`, 'utf8');
+		totalHash = fs.readFileSync(`${buildDir}/.hash/${functionName}_${totalHashFilename}`, 'utf8');
 	}
 	catch (e) {
 	}
@@ -190,6 +191,6 @@ async function getHashesFromBuildFolder(functionName) {
 }
 
 async function putHashesForFunction(functionName, hashes) {
-	fs.writeFileSync(`${buildDir}/.${functionName}_${installHashFilename}`, hashes.requirements)
-	fs.writeFileSync(`${buildDir}/.${functionName}_${totalHashFilename}`, hashes.total)
+	fs.writeFileSync(`${buildDir}/.hash/${functionName}_${installHashFilename}`, hashes.requirements)
+	fs.writeFileSync(`${buildDir}/.hash/${functionName}_${totalHashFilename}`, hashes.total)
 }

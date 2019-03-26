@@ -1,7 +1,8 @@
 'use strict';
 
 const Q = require('q');
-const fs = require('fs');
+// const fs = require('fs');
+const fs = require('fs-extra')
 const zipFolder = require('folder-zip-sync')
 const { readdirSync, statSync } = require('fs')
 const { join } = require('path')
@@ -9,7 +10,6 @@ const yaml = require('js-yaml')
 const Selector = require('node-option')
 const del = require('del')
 var dirsum = require('dirsum');
-var ncp = require('ncp').ncp
 var chalk = require('chalk');
 
 
@@ -56,7 +56,7 @@ module.exports = {
 		}
 
 
-		console.log("Done")
+		console.log("result: " + chalk.green.inverse("Done"))
 	}
 }
 
@@ -69,7 +69,7 @@ async function parseOptionResults(results) {
 			const dep = await getDependencies(`${results[i]}/function.py`)
 			dep.shift()
 
-			console.log(`${results[i]}: ${dep.length} dependencies`)
+			console.log(chalk.yellow(`${results[i]}`) + `: ${dep.length} dependencies`)
 
 			await populateFunctionCommonFolder(results[i], dep)
 
@@ -143,7 +143,8 @@ async function functionBuildFolder(functionName, dependencies) {
 	const functionAppFolder = `${appDir}/${functionName}`
 
 	await fs.mkdirSync(functionBuildFolder, { recursive: true })
-	await ncpPromise(`${appDir}/${functionName}`, functionBuildFolder)
+	await del([functionBuildFolder]);
+	await fs.copy(`${appDir}/${functionName}`, functionBuildFolder)
 
 	const newHash = await dirsumPromise(functionAppFolder)
 	const oldHash = await getHashesFromBuildFolder(functionName)
@@ -158,20 +159,6 @@ async function functionBuildFolder(functionName, dependencies) {
 
 		zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
 	}
-}
-
-function ncpPromise(source, dst) {
-	var deferred = Q.defer();
-
-	ncp(source, dst,
-		function (err) {
-			if (err) {
-				return console.error(err);
-			}
-			deferred.resolve()
-		});
-
-	return deferred.promise;
 }
 
 function dirsumPromise(dir) {
@@ -199,7 +186,6 @@ async function getHashesFromBuildFolder(functionName) {
 		totalHash = fs.readFileSync(`${buildDir}/.${functionName}_${totalHashFilename}`, 'utf8');
 	}
 	catch (e) {
-		console.log("no hahses")
 	}
 
 	return {

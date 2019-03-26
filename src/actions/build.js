@@ -10,6 +10,7 @@ const Selector = require('node-option')
 const del = require('del')
 var dirsum = require('dirsum');
 var ncp = require('ncp').ncp
+var chalk = require('chalk');
 
 
 const appDir = `${process.cwd()}/app`
@@ -17,7 +18,9 @@ const buildDir = `${process.cwd()}/.build`
 
 module.exports = {
 	build: async function(option) {
-		const dirs = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory() && f != "common")
+		const dirsFunction = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory() && f != "common")
+
+		const dirs = dirsFunction(appDir)
 
 		var result = []
 		if (option == undefined) {
@@ -31,7 +34,8 @@ module.exports = {
 			console.log("Choose which function to build")
 
 			selector.add("build all (with cache)", 1)
-			dirs(appDir).forEach(function(dir) {
+
+			dirs.forEach(function(dir) {
 				selector.add(dir)
 			});
 			result = await selector.render()
@@ -44,7 +48,13 @@ module.exports = {
 				result = [option]
 			}
 		}
-		await parseOptionResults(result)
+		if (result.includes(1)) {
+			await parseOptionResults(dirs)
+		}
+		else {
+			await parseOptionResults(result)
+		}
+
 
 		console.log("Done")
 	}
@@ -97,7 +107,7 @@ async function getDependencies(filename, dependencies = []) {
 				if (!dependencies.includes(files[i])) {
 					dependencies = await getDependencies(files[i], dependencies)
 				}
-				
+
 			}
 		}
 	} catch (err) {
@@ -123,31 +133,41 @@ async function populateFunctionCommonFolder(functionName, dependencies, location
 			await fs.symlinkSync(srcTarget, dstTarget)
 		}
 		else {
-			await fs.copyFileSync(srcTarget, dstTarget);	
+			await fs.copyFileSync(srcTarget, dstTarget);
 		}
 	}
 }
 
 async function functionBuildFolder(functionName, dependencies) {
 	const functionBuildFolder = `${buildDir}/${functionName}`
+	const functionAppFolder = `${appDir}/${functionName}`
+
 	await fs.mkdirSync(functionBuildFolder, { recursive: true })
 	await ncpPromise(`${appDir}/${functionName}`, functionBuildFolder)
 
-	const hash = await dirsumPromise(functionBuildFolder)
-	console.log(hash)
+	const newHash = await dirsumPromise(functionAppFolder)
+	const oldHash = await getHashesFromBuildFolder(functionName)
 
-	zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
+	if (newHash.total != oldHash.total) {
+		console.log(chalk.green("(y) code change"))
+		if (newHash.requirements != oldHash.requirements) {
+			console.log(chalk.green("(y) requirements change"))
+		}
+
+		await putHashesForFunction(functionName, newHash)
+
+		zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
+	}
 }
 
 function ncpPromise(source, dst) {
 	var deferred = Q.defer();
 
-	ncp(source, dst, 
+	ncp(source, dst,
 		function (err) {
 			if (err) {
 				return console.error(err);
 			}
-
 			deferred.resolve()
 		});
 
@@ -156,10 +176,39 @@ function ncpPromise(source, dst) {
 
 function dirsumPromise(dir) {
 	var deferred = Q.defer();
-
 	dirsum.digest(dir, 'sha1', function(err, hashes) {
-		deferred.resolve(hashes.hash)
+		deferred.resolve({
+			requirements: hashes.files["requirements.txt"],
+			total: hashes.hash
+		})
 	})
 
 	return deferred.promise
+}
+
+const installHashFilename = "install_hash.txt"
+const totalHashFilename = "total_hash.txt"
+
+
+async function getHashesFromBuildFolder(functionName) {
+	var installHash = undefined
+	var totalHash = undefined
+
+	try {
+		installHash = fs.readFileSync(`${buildDir}/.${functionName}_${installHashFilename}`, 'utf8');
+		totalHash = fs.readFileSync(`${buildDir}/.${functionName}_${totalHashFilename}`, 'utf8');
+	}
+	catch (e) {
+		console.log("no hahses")
+	}
+
+	return {
+		requirements: installHash,
+		total: totalHash
+	}
+}
+
+async function putHashesForFunction(functionName, hashes) {
+	fs.writeFileSync(`${buildDir}/.${functionName}_${installHashFilename}`, hashes.requirements)
+	fs.writeFileSync(`${buildDir}/.${functionName}_${totalHashFilename}`, hashes.total)
 }

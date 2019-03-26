@@ -54,9 +54,6 @@ module.exports = {
 		else {
 			await parseOptionResults(result)
 		}
-
-
-		console.log("result: " + chalk.green("Done"))
 	}
 }
 
@@ -161,6 +158,9 @@ async function functionBuildFolder(functionName, dependencies) {
 		await putHashesForFunction(functionName, newHash)
 
 		zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
+	}
+	else {
+		console.log(chalk.blueBright("(#) no changes detected"));
 	}
 }
 

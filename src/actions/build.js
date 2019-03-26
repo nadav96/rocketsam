@@ -56,25 +56,20 @@ module.exports = {
 		}
 
 
-		console.log("result: " + chalk.green.inverse("Done"))
+		console.log("result: " + chalk.green("Done"))
 	}
 }
 
 async function parseOptionResults(results) {
 	for (var i = 0; i < results.length; i++) {
-		if (results[i] == 1) {
-			// todo: implement caching validation in the common folder
-		}
-		else {
-			const dep = await getDependencies(`${results[i]}/function.py`)
-			dep.shift()
+		const dep = await getDependencies(`${results[i]}/function.py`)
+		dep.shift()
 
-			console.log(chalk.yellow(`${results[i]}`) + `: ${dep.length} dependencies`)
+		console.log(chalk.yellow(`${results[i]}`) + `: ${dep.length} common dependencies`)
 
-			await populateFunctionCommonFolder(results[i], dep)
+		await populateFunctionCommonFolder(results[i], dep)
 
-			await functionBuildFolder(results[i], [])
-		}
+		await functionBuildFolder(results[i], [])
 	};
 }
 

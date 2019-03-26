@@ -3,20 +3,21 @@
 'use strict';
 const cli = require('./src/meow.js').getCli();
 
+const actionsPath = "./src/actions"
 
 switch(cli.input[0]) {
 	case "init":
 		console.log("Init")
-		require("./src/actions/init.js").init()
+		require(`${actionsPath}/init.js`).init()
 		break
 	case "build":
-		require("./src/actions/build.js").build(cli.input[1])
+		require(`${actionsPath}/build.js`).build(cli.input[1])
 		break;
 	case "create":
-		require("./src/actions/create.js").create(cli.input[1])
+		require(`${actionsPath}/create.js`).create(cli.input[1])
 		break
 	case "status":
-		require("./src/actions/status.js").status()
+		require(`${actionsPath}/status.js`).status()
 		break;
 	case "help":
 		cli.showHelp()

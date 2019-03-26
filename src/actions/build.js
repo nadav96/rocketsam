@@ -137,18 +137,25 @@ async function functionBuildFolder(functionName, dependencies) {
 	const functionBuildFolder = `${buildDir}/${functionName}`
 	const functionAppFolder = `${appDir}/${functionName}`
 
+	// Creates if not exists the build folder
+	//alongside the sub directories .hash and the function folder
 	await fs.mkdirSync(`${buildDir}/.hash`, { recursive: true })
 	await fs.mkdirSync(functionBuildFolder, { recursive: true })
+	// Delete the previous created build folder
 	await del([functionBuildFolder]);
+	// Copy the function app folder to the build folder
 	await fs.copy(`${appDir}/${functionName}`, functionBuildFolder)
+
+	// Delete the template folder in the function build folder
+	await del([`${functionBuildFolder}/template.yaml`])
 
 	const newHash = await dirsumPromise(functionAppFolder)
 	const oldHash = await getHashesFromBuildFolder(functionName)
 
 	if (newHash.total != oldHash.total) {
-		console.log(chalk.green("(y) code change"))
+		console.log(chalk.green("(m) code"))
 		if (newHash.requirements != oldHash.requirements) {
-			console.log(chalk.green("(y) requirements change"))
+			console.log(chalk.green("(m) requirements"))
 		}
 
 		await putHashesForFunction(functionName, newHash)

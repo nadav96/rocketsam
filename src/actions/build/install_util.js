@@ -58,6 +58,9 @@ async function installPythonRequirements(functionName) {
   if (run.status == 0) {
     console.log("Installed requirements successfully");
   }
+  else {
+    console.log("Failed install requirements");
+  }
 
   return run.status == 0
 }

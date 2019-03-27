@@ -153,19 +153,23 @@ async function functionBuildFolder(functionName, dependencies) {
 	var newHash = await hashUtil.calculateHashForDirectoy(functionBuildFolder)
 	const oldHash = await hashUtil.getHashesFromBuildFolder(functionName)
 
+	var installResult = true
+
 	if (newHash.total != oldHash.total) {
 		console.log(chalk.green("(m) code"))
 		if (newHash.requirements != oldHash.requirements) {
 			console.log(chalk.green("(m) requirements"))
 
-			await installUtil.installPythonRequirements(functionName)
+			installResult = await installUtil.installPythonRequirements(functionName)
 			installUtil.copyRequirementsToFunction(functionName)
 
 			newHash = await hashUtil.calculateHashForDirectoy(functionBuildFolder)
 		}
 
-		await zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
-		await hashUtil.putHashesForFunction(functionName, newHash)
+		if (installResult) {
+			await zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
+			await hashUtil.putHashesForFunction(functionName, newHash)
+		}
 	}
 	else {
 		console.log(chalk.blueBright("(#) no changes detected"));

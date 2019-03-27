@@ -13,6 +13,9 @@ switch(cli.input[0]) {
 	case "build":
 		require(`${actionsPath}/build.js`).build(cli.input[1])
 		break;
+	case "install":
+		require(`${actionsPath}/build/install_util.js`).installPythonRequirements(cli.input[1])
+		break;
 	case "create":
 		require(`${actionsPath}/create.js`).create(cli.input[1])
 		break

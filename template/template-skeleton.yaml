@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: sammy app
+
+Globals:
+    Function:
+        Timeout: 3
+        Environment:
+          Variables:
+            aws_environment: cloud
+Resources:
+    ApiGateway:
+      Type: AWS::Serverless::Api
+      Properties:
+        StageName: prod
+        DefinitionBody:
+          swagger: 2.0
+          info:
+            title:
+              Ref: AWS::StackName
+          paths: {}

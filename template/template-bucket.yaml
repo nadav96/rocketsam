@@ -1,0 +1,20 @@
+Parameters:
+  bucketName:
+    Type: String
+    Default: YOUR-BUCKET-NAME
+Globals:
+    Function:
+        Timeout: 3
+        Environment:
+          Variables:
+            aws_environment: cloud
+            bucket_name:
+              Fn::Sub: '${bucketName}'
+            bucket_url:
+              Fn::Sub: 'https://s3-${AWS::Region}.amazonaws.com/${bucketName}'
+Resources:
+    RandomniteBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName:
+          Fn::Sub: '${bucketName}'

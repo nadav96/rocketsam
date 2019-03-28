@@ -15,8 +15,8 @@ module.exports = {
 
 			const files = ["function.py", "requirements.txt", "template.yaml"]
 			for (var i = 0; i < files.length; i++) {
-				const filePath = `${scriptDir}/data/function/${files[i]}`
-				await fs.copyFileSync(filePath, `${appDir}/${name}/${files[i]}`);	
+				const filePath = `${scriptDir}/template/function/${files[i]}`
+				await fs.copyFileSync(filePath, `${appDir}/${name}/${files[i]}`);
 			};
 
 		try {
@@ -29,7 +29,7 @@ module.exports = {
 		} catch (e) {
 		  console.log(e);
 		}
-			
+
 		}
 		else {
 			console.log("Invalid function name supplied")

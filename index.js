@@ -6,6 +6,7 @@ const cli = require('./src/meow.js').getCli();
 const actionsPath = "./src/actions"
 
 switch(cli.input[0]) {
+	// RocketSam CLI
 	case "init":
 		console.log("Init")
 		require(`${actionsPath}/init.js`).init()

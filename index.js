@@ -13,6 +13,9 @@ switch(cli.input[0]) {
 	case "build":
 		require(`${actionsPath}/build.js`).build(cli.input[1])
 		break;
+	case "template":
+		require(`${actionsPath}/template.js`).createTemplate()
+		break
 	case "install":
 		require(`${actionsPath}/build/install_util.js`).installPythonRequirements(cli.input[1])
 		break;

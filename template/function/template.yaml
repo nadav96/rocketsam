@@ -1,7 +1,4 @@
 Name: DemoFunction
-IsApi: True
-IsAuthenticated: False
-ExcludeSecurity: False
 Environment:
   Variables:
     demo: 1
@@ -13,3 +10,16 @@ Events:
       Method: get
       RestApiId:
         Ref: ApiGateway
+SammyApiEvent:
+  isAuthenticated: False
+  excludeSecurity: False
+  path: /demo
+  method: get
+SammyBucketEvent:
+  bucketName: SampleBucket
+  bucketEvent: s3:ObjectCreated:*
+  Rules:
+  - Name: suffix
+    Value: .zip
+  - Name: prefix
+    Value: uploads/

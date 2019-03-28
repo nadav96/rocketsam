@@ -8,6 +8,7 @@ Globals:
         Environment:
           Variables:
             aws_environment: cloud
+
 Resources:
     ApiGateway:
       Type: AWS::Serverless::Api

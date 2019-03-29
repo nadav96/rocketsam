@@ -9,14 +9,4 @@ Globals:
           Variables:
             aws_environment: cloud
 
-Resources:
-    ApiGateway:
-      Type: AWS::Serverless::Api
-      Properties:
-        StageName: prod
-        DefinitionBody:
-          swagger: 2.0
-          info:
-            title:
-              Ref: AWS::StackName
-          paths: {}
+Resources: {}

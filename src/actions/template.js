@@ -53,6 +53,8 @@ async function appendFunctionTemplate(functionName) {
 
     const functionResourceName = functionDoc["Name"]
     const functionTimeout = functionDoc["timeout"]
+    const env = functionDoc["Environment"]
+
     skeletonDoc["Resources"][functionResourceName] = {
       Type: "AWS::Serverless::Function",
       Properties: {
@@ -60,6 +62,7 @@ async function appendFunctionTemplate(functionName) {
         Handler: "function.handler",
         Runtime: "python3.6",
         Timeout: functionTimeout ? functionTimeout : 10,
+        Environment: env,
         Events: {}
       }
     }
@@ -87,6 +90,24 @@ function addApiEventToFunction(functionDoc, skeletonDoc) {
   const excludeSecurity = apiEvent["excludeSecurity"]
   const path = apiEvent["path"]
   const method = apiEvent["method"]
+
+  if (skeletonDoc["Resources"]["ApiGateway"] == undefined) {
+    skeletonDoc["Resources"]["ApiGateway"] = {
+      Type: "AWS::Serverless::Api",
+      Properties: {
+        StageName: "prod",
+        DefinitionBody: {
+          swagger: 2.0,
+          info: {
+            title: {
+              Ref: "AWS::StackName"
+            }
+          },
+          paths: {}
+        }
+      }
+    }
+  }
 
   const functionARN = "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${"+
     functionResourceName + ".Arn}/invocations"

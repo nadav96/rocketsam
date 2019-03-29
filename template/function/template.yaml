@@ -2,11 +2,3 @@ Name: DemoFunction
 Environment:
   Variables:
     demo: 1
-Events:
-  Main:
-    Type: Api
-    Properties:
-      Path: /demo
-      Method: get
-      RestApiId:
-        Ref: ApiGateway

@@ -34,8 +34,6 @@ module.exports = {
 			const templateFile = `${appDir}/${name}/template.yaml`
 			var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
 			doc.Name = `${name}Function`
-			doc.Events.Main.Properties.Path = `/${name}`
-
 			fs.writeFileSync(templateFile, yaml.safeDump(doc))
 		} catch (e) {
 		  console.log(e);

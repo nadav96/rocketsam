@@ -21,7 +21,8 @@ switch(cli.input[0]) {
 		require(`${actionsPath}/add.js`).add(cli)
 		break
 	case "install":
-		require(`${actionsPath}/build/install_util.js`).installPythonRequirements(cli.input[1])
+		require(`${actionsPath}/build/install_util.js`)
+				.installPythonRequirements(cli.input[1])
 		break;
 	case "create":
 		require(`${actionsPath}/create.js`).create(cli.input[1])
@@ -29,6 +30,9 @@ switch(cli.input[0]) {
 	case "status":
 		require(`${actionsPath}/status.js`).status()
 		break;
+	case "deploy":
+		require(`${actionsPath}/deploy.js`).deployProject()
+		break
 	case "help":
 		cli.showHelp()
 		break;

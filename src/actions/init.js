@@ -4,18 +4,23 @@ const fs = require('fs-extra');
 const unzip = require('unzip');
 const path = require('path');
 
-const appDir = `${process.cwd()}/app`
+const appDir = `${process.cwd()}`
 
 module.exports = {
 	init: async function() {
 		var templateDir = `${path.dirname(require.main.filename)}/template`;
 
-		await fs.mkdirSync(`${appDir}`, { recursive: true })
+		await fs.mkdirSync(`${appDir}/app`, { recursive: true })
 
-		const files = ["template-skeleton.yaml", ".gitignore"]
+		const files = [
+			{ prefix: "/app", file: "template-skeleton.yaml"},
+			{ prefix: "", file: "rocketsam.yaml"},
+			{ prefix: "", file: ".gitignore"},
+		]
 		for (var i = 0; i < files.length; i++) {
-			const filePath = `${templateDir}/${files[i]}`
-			await fs.copyFileSync(filePath, `${appDir}/${files[i]}`);
+			const filePath = `${templateDir}/${files[i].file}`
+			await fs.copyFileSync(filePath,
+				`${appDir}${files[i].prefix}/${files[i].file}`);
 		}
 	}
 }

@@ -1,0 +1,4 @@
+appDir: $/app
+buildDir: $/.build
+storageBucketName: SampleBucket
+stackName: ABCD

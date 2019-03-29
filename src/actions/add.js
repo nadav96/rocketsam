@@ -2,11 +2,23 @@
 
 const fs = require('fs-extra')
 const yaml = require('js-yaml');
+var chalk = require('chalk');
+const path = require('path')
+var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
-const appDir = `${process.cwd()}/app`
+var appDir = undefined
 
 module.exports = {
-  add: function(cli) {
+  add: async function(cli) {
+    const settings = await settingsParser()
+		if (settings != undefined) {
+				appDir = settings.appDir
+		}
+		else {
+			console.log(chalk.red("Project not configured, aborting add"));
+			return
+		}
+
     switch (cli.input[1]) {
       case "bucket":
         const bucketName = cli.input[2]

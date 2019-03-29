@@ -3,21 +3,25 @@
 const fs = require('fs-extra');
 const { spawnSync } = require('child_process');
 const chalk = require("chalk")
-
-const appDir = `${process.cwd()}/app`
-const buildDir = `${process.cwd()}/.build`
+const path = require('path')
+var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
 module.exports = {
   deployProject: deployProject
 }
 
-function deployProject() {
-  samPackageProject()
-  samDeployProject()
+async function deployProject() {
+  const settings = await settingsParser()
+  if (settings == undefined) {
+    console.log(chalk.red("Project not configured, aborting deploy"));
+    return
+  }
+
+  samPackageProject(settings.buildDir, settings.storageBucketName)
+  samDeployProject(settings.buildDir, settings.stackName)
 }
 
-function samPackageProject() {
-  const storageBucketName = "randomnite-data"
+function samPackageProject(buildDir, storageBucketName) {
 
   const ps = spawnSync('sam',
     ["package",
@@ -30,12 +34,11 @@ function samPackageProject() {
   }
   else {
     console.log(chalk.red("Failed packaging the project, please check your template file"))
+    console.log(ps);
   }
 }
 
-function samDeployProject() {
-  const stackName = "ABC"
-
+function samDeployProject(buildDir, stackName) {
   const ps = spawnSync('sam',
     ["deploy",
     "--template-file", `${buildDir}/.packaged.yaml`,

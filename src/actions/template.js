@@ -3,15 +3,29 @@
 const fs = require('fs-extra')
 const { readdirSync, statSync } = require('fs-extra')
 const { join } = require('path')
-const yaml = require('js-yaml')
+const path = require('path')
 
-const appDir = `${process.cwd()}/app`
-const buildDir = `${process.cwd()}/.build`
-const skeletonTemplateFile = `${buildDir}/template.yaml`
+const yaml = require('js-yaml')
+var chalk = require('chalk');
+var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
+
+var appDir = undefined
+var buildDir = undefined
+var skeletonTemplateFile = undefined
 
 module.exports = {
   createTemplate: async function() {
-    console.log("hello template");
+    const settings = await settingsParser()
+    if (settings != undefined) {
+        appDir = settings.appDir
+        buildDir = settings.buildDir
+        skeletonTemplateFile = `${buildDir}/template.yaml`
+    }
+    else {
+      console.log(chalk.red("Project not configured, aborting build"));
+      return
+    }
+
     createTemplate()
   }
 };

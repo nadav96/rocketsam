@@ -3,10 +3,10 @@
 const fs = require('fs-extra')
 const dirsum = require('dirsum');
 const Q = require('q');
+var chalk = require('chalk');
+const path = require('path')
+var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
-
-const appDir = `${process.cwd()}/app`
-const buildDir = `${process.cwd()}/.build`
 const installHashFilename = "install.txt"
 const totalHashFilename = "total.txt"
 
@@ -28,7 +28,7 @@ function dirsumPromise(dir) {
 	return deferred.promise
 }
 
-async function getHashesFromBuildFolder(functionName) {
+async function getHashesFromBuildFolder(buildDir, functionName) {
 	var installHash = undefined
 	var totalHash = undefined
 
@@ -45,7 +45,7 @@ async function getHashesFromBuildFolder(functionName) {
 	}
 }
 
-async function putHashesForFunction(functionName, hashes) {
+async function putHashesForFunction(buildDir, functionName, hashes) {
 	fs.writeFileSync(`${buildDir}/.hash/${functionName}_${installHashFilename}`, hashes.requirements)
 	fs.writeFileSync(`${buildDir}/.hash/${functionName}_${totalHashFilename}`, hashes.total)
 }

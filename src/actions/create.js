@@ -4,12 +4,23 @@ const fs = require('fs-extra');
 const unzip = require('unzip');
 const yaml = require('js-yaml');
 const path = require('path');
+const chalk = require("chalk")
+var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
-const appDir = `${process.cwd()}/app`
+var appDir = undefined
 const scriptDir = path.dirname(require.main.filename);
 
 module.exports = {
 	create: async function(name) {
+		const settings = await settingsParser()
+		if (settings != undefined) {
+				appDir = settings.appDir
+		}
+		else {
+			console.log(chalk.red("Project not configured, aborting create"));
+			return
+		}
+
 		if (name) {
 			await fs.mkdirSync(`${appDir}/${name}`, { recursive: true })
 

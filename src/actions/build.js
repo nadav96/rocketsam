@@ -5,18 +5,30 @@ const Q = require('q');
 const zipFolder = require('folder-zip-sync')
 const { readdirSync, statSync } = require('fs-extra')
 const { join } = require('path')
+const path = require('path')
 const yaml = require('js-yaml')
 const Selector = require('node-option')
 const del = require('del')
 var dirsum = require('dirsum');
 var chalk = require('chalk');
 var installUtil = require('./build/install_util')
+var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
-const appDir = `${process.cwd()}/app`
-const buildDir = `${process.cwd()}/.build`
+var appDir = undefined
+var buildDir = undefined
 
 module.exports = {
 	build: async function(option) {
+		const settings = await settingsParser()
+		if (settings != undefined) {
+				appDir = settings.appDir
+				buildDir = settings.buildDir
+		}
+		else {
+			console.log(chalk.red("Project not configured, aborting build"));
+			return
+		}
+
 		const dirsFunction = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory() && f != "common")
 
 		const dirs = dirsFunction(appDir)
@@ -146,12 +158,12 @@ async function functionBuildFolder(functionName, dependencies) {
 	await del([`${functionBuildFolder}/template.yaml`])
 
 	// copy the old function requirements folder is exists
-	installUtil.copyRequirementsToFunction(functionName)
+	installUtil.copyRequirementsToFunction(buildDir, functionName)
 
 	const hashUtil = require("./build/hash_util.js")
 
 	var newHash = await hashUtil.calculateHashForDirectoy(functionBuildFolder)
-	const oldHash = await hashUtil.getHashesFromBuildFolder(functionName)
+	const oldHash = await hashUtil.getHashesFromBuildFolder(buildDir, functionName)
 
 	var installResult = true
 
@@ -160,15 +172,16 @@ async function functionBuildFolder(functionName, dependencies) {
 		if (newHash.requirements != oldHash.requirements) {
 			console.log(chalk.green("(m) requirements"))
 
-			installResult = await installUtil.installPythonRequirements(functionName)
-			installUtil.copyRequirementsToFunction(functionName)
+			installResult = await installUtil
+				.installPythonRequirements(appDir, buildDir , functionName)
+			installUtil.copyRequirementsToFunction(buildDir, functionName)
 
 			newHash = await hashUtil.calculateHashForDirectoy(functionBuildFolder)
 		}
 
 		if (installResult) {
 			await zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
-			await hashUtil.putHashesForFunction(functionName, newHash)
+			await hashUtil.putHashesForFunction(buildDir, functionName, newHash)
 		}
 	}
 	else {

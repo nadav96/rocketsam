@@ -5,9 +5,6 @@ const path = require('path');
 const fs = require('fs-extra')
 const del = require('del')
 
-const appDir = `${process.cwd()}/app`
-const buildDir = `${process.cwd()}/.build`
-
 module.exports = {
   isDockerAvailable: isDockerAvailable,
   buildContainer: buildContainer,
@@ -34,7 +31,7 @@ function buildContainer() {
     { encoding: 'utf-8' })
 }
 
-async function installPythonRequirements(functionName) {
+async function installPythonRequirements(appDir, buildDir, functionName) {
   const scriptPath = path.dirname(require.main.filename)
   await fs.mkdirSync(`${buildDir}/.requirements/${functionName}`, { recursive: true })
   await del([`${buildDir}/.requirements/${functionName}/*`]);
@@ -65,7 +62,7 @@ async function installPythonRequirements(functionName) {
   return run.status == 0
 }
 
-async function copyRequirementsToFunction(functionName) {
+async function copyRequirementsToFunction(buildDir, functionName) {
   const functionRequirementsFolder = `${buildDir}/.requirements/${functionName}`
   const functionBuildFolder = `${buildDir}/${functionName}`
 

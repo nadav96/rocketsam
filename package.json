@@ -21,6 +21,6 @@
     "unzip": "^0.1.11"
   },
   "bin": {
-    "samy": "./index.js"
+    "rocketsam": "./index.js"
   }
 }

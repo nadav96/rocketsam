@@ -34,7 +34,7 @@ switch(cli.input[0]) {
 		require(`${actionsPath}/deploy.js`).deployProject()
 		break
 	case "help":
-		cli.showHelp()
+		require(`${actionsPath}/help.js`).help()
 		break;
 	default:
 		console.log(`No command named ${cli.input[0]}`)

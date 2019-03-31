@@ -49,6 +49,7 @@ function samDeployProject(buildDir, stackName) {
     console.log("done deploying");
   }
   else {
+    console.log(ps);
     console.log(chalk.red("Failed deploying the project, please check your template file"))
   }
 }

@@ -33,6 +33,9 @@ switch(cli.input[0]) {
 	case "deploy":
 		require(`${actionsPath}/deploy.js`).deployProject()
 		break
+	case "remove":
+		require(`${actionsPath}/remove.js`).remove()
+		break
 	case "help":
 		require(`${actionsPath}/help.js`).help()
 		break;

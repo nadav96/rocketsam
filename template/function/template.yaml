@@ -1,4 +1,5 @@
 Name: DemoFunction
+Timeout: 10
 Environment:
   Variables:
     demo: 1

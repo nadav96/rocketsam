@@ -52,19 +52,25 @@ async function appendFunctionTemplate(functionName) {
     var functionDoc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'))
 
     const functionResourceName = functionDoc["Name"]
-    const functionTimeout = functionDoc["timeout"]
+    const functionTimeout = functionDoc["Timeout"]
     const env = functionDoc["Environment"]
+
+    const staticFunctionPropertiesDoc = {
+      CodeUri: `./${functionName}.zip`,
+      Handler: "function.handler",
+      Runtime: "python3.6",
+      Timeout: 10,
+      Events: {}
+    }
+
+    const mergedFunctionPropertiesDoc = Object.assign(staticFunctionPropertiesDoc, functionDoc)
+    delete mergedFunctionPropertiesDoc["Name"]
+    delete mergedFunctionPropertiesDoc["SammyApiEvent"]
+    delete mergedFunctionPropertiesDoc["SammyBucketEvent"]
 
     skeletonDoc["Resources"][functionResourceName] = {
       Type: "AWS::Serverless::Function",
-      Properties: {
-        CodeUri: `./${functionName}.zip`,
-        Handler: "function.handler",
-        Runtime: "python3.6",
-        Timeout: functionTimeout ? functionTimeout : 10,
-        Environment: env,
-        Events: {}
-      }
+      Properties: mergedFunctionPropertiesDoc
     }
 
     if (functionDoc["SammyApiEvent"] != undefined) {

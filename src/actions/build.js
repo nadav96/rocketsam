@@ -16,6 +16,7 @@ var settingsParser = require(`${path.dirname(require.main.filename)}/src/setting
 
 var appDir = undefined
 var buildDir = undefined
+var commonDir = undefined
 
 module.exports = {
 	build: async function(option) {
@@ -23,6 +24,7 @@ module.exports = {
 		if (settings != undefined) {
 				appDir = settings.appDir
 				buildDir = settings.buildDir
+				commonDir = settings.commonDir
 		}
 		else {
 			console.log(chalk.red("Project not configured, aborting build"));
@@ -70,7 +72,7 @@ module.exports = {
 
 async function parseOptionResults(results) {
 	for (var i = 0; i < results.length; i++) {
-		const dep = await getDependencies(`${results[i]}/function.py`)
+		const dep = await getDependencies(`${appDir}/${results[i]}/function.py`)
 		dep.shift()
 
 		console.log(chalk.yellow(`${results[i]}:`) + chalk.bold(` ${dep.length}`) + ` common dependencies`)
@@ -86,7 +88,7 @@ async function getDependencies(filename, dependencies = []) {
 		return dependencies
 	}
 	try {
-		var contents = fs.readFileSync(`${appDir}/${filename}`, 'utf8');
+		var contents = fs.readFileSync(filename, 'utf8');
 
 		// After location the dependency file was found
 		dependencies.push(filename)
@@ -108,9 +110,11 @@ async function getDependencies(filename, dependencies = []) {
 			const files = diLine.slice(diStartLocation + 3).split(" ")
 			for (var i = 0; i < files.length; i++) {
 				if (!dependencies.includes(files[i])) {
-					dependencies = await getDependencies(files[i], dependencies)
-				}
+					if (files[i] != "") {
 
+						dependencies = await getDependencies(`${commonDir}/${files[i]}`, dependencies)
+					}
+				}
 			}
 		}
 	} catch (err) {
@@ -122,16 +126,19 @@ async function getDependencies(filename, dependencies = []) {
 
 async function populateFunctionCommonFolder(functionName, dependencies, location=appDir, commonSymlinks=true) {
 	// Delete the previous function common folder
+
 	await del([`${location}/${functionName}/common`]);
 
 	for (var i = 0; i < dependencies.length; i++) {
+		const dependencyFilename = dependencies[i].split(`${commonDir}/`)[1]
+
 		// Create the common folder structure
-		const folderStructure = dependencies[i].substring(0 ,dependencies[i].lastIndexOf("/"));
+		const folderStructure = "common/" + path.dirname(dependencyFilename);
 		await fs.mkdirSync(`${location}/${functionName}/${folderStructure}`, { recursive: true })
 
 		// Link the dependency
-		const srcTarget = `${appDir}/${dependencies[i]}`
-		const dstTarget = `${location}/${functionName}/${dependencies[i]}`
+		const srcTarget = `${dependencies[i]}`
+		const dstTarget = `${location}/${functionName}/common/${dependencyFilename}`
 		if (commonSymlinks) {
 			await fs.symlinkSync(srcTarget, dstTarget)
 		}

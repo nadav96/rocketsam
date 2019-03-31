@@ -1,4 +1,5 @@
 appDir: $/app
 buildDir: $/.build
+commonDir: $/app/common
 storageBucketName: SampleBucket
 stackName: ABCD

@@ -19,8 +19,13 @@ module.exports = {
 		]
 		for (var i = 0; i < files.length; i++) {
 			const filePath = `${templateDir}/${files[i].file}`
-			await fs.copyFileSync(filePath,
-				`${appDir}${files[i].prefix}/${files[i].file}`);
+			try {
+				await fs.copyFileSync(filePath,
+					`${appDir}${files[i].prefix}/${files[i].file}`, [fs.constants.COPYFILE_EXCL]);
+			}
+			catch (e) {
+				console.log(`${files[i].file} already exists`);
+			}
 		}
 	}
 }

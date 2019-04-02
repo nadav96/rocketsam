@@ -14,8 +14,6 @@ exports.getOutputs = async function () {
     console.log(chalk.red("Project not configured, aborting outputs"));
     return
   }
-
-  console.log("Hello world");
   var params = {
     StackName: settings.stackName
   };

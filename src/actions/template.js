@@ -122,11 +122,6 @@ function addApiEventToFunction(functionDoc, skeletonDoc) {
   var endpoint = {}
   endpoint[method] = {
     responses: {},
-    security: [
-      {
-        auth_tokenorizer: []
-      }
-    ],
     "x-amazon-apigateway-integration": {
       httpMethod: "post",
       type: "aws_proxy",
@@ -134,6 +129,13 @@ function addApiEventToFunction(functionDoc, skeletonDoc) {
         "Fn::Sub": functionARN
       }
     }
+  }
+  if (excludeSecurity == false) {
+    endpoint[method]["security"] = [
+      {
+        auth_tokenorizer: []
+      }
+    ]
   }
 
   skeletonDoc["Resources"]["ApiGateway"]

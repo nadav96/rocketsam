@@ -35,6 +35,7 @@ async function createTemplate() {
   await fs.copyFileSync(`${appDir}/template-skeleton.yaml`, skeletonTemplateFile)
 
   const functions = await getFunctions()
+  console.log(functions);
   for (var i = 0; i < functions.length; i++) {
     await appendFunctionTemplate(functions[i])
   }

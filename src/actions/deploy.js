@@ -28,7 +28,7 @@ function samPackageProject(buildDir, storageBucketName) {
     "--template-file", `${buildDir}/template.yaml`,
     "--output-template-file", `${buildDir}/.packaged.yaml`,
     "--s3-bucket", storageBucketName],
-    { encoding: 'utf-8' });
+    { encoding: 'utf-8' , shell: true});
   if (ps.status == 0) {
     console.log("done packaging");
   }
@@ -44,12 +44,13 @@ function samDeployProject(buildDir, stackName) {
     "--template-file", `${buildDir}/.packaged.yaml`,
     "--stack-name", stackName,
     "--capabilities","CAPABILITY_IAM"],
-    { encoding: 'utf-8' });
+    { encoding: 'utf-8' , shell: true});
   if (ps.status == 0) {
     console.log("done deploying");
   }
   else {
-    console.log(ps);
     console.log(chalk.red("Failed deploying the project, please check your template file"))
   }
+
+  console.log(ps);
 }

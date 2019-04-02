@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.433.0",
     "del": "^4.0.0",
     "dirsum": "^0.1.1",
     "folder-zip-sync": "^1.0.5",

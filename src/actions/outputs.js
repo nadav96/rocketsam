@@ -17,10 +17,15 @@ exports.getOutputs = async function () {
   var params = {
     StackName: settings.stackName
   };
-  const result = await cloudformation.describeStacks(params).promise()
-  const outputs = result["Stacks"][0]["Outputs"]
-  outputs.forEach(function(output) {
-    console.log(`${chalk.bold(output["OutputKey"])}: ${output["Description"]}`);
-    console.log(`* ${chalk.yellow(output["OutputValue"])}`);
-  })
+  try {
+    const result = await cloudformation.describeStacks(params).promise()
+    const outputs = result["Stacks"][0]["Outputs"]
+    outputs.forEach(function(output) {
+      console.log(`${chalk.bold(output["OutputKey"])}: ${output["Description"]}`);
+      console.log(`* ${chalk.yellow(output["OutputValue"])}`);
+    })
+  }
+  catch (e) {
+    console.log(chalk.red("Error fetching stack, is it deployed?"));
+  }
 };

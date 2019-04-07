@@ -2,14 +2,14 @@
 
 'use strict';
 const cli = require('./src/meow.js').getCli();
+const chalk = require("chalk")
 
 const actionsPath = "./src/actions"
 
 switch(cli.input[0]) {
 	// RocketSam CLI
 	case "init":
-		console.log("Init")
-		require(`${actionsPath}/init.js`).init()
+		require(`${actionsPath}/init.js`).init(cli)
 		break
 	case "build":
 		require(`${actionsPath}/build.js`).build(cli.input[1])
@@ -46,6 +46,6 @@ switch(cli.input[0]) {
 		require(`${actionsPath}/help.js`).help()
 		break;
 	default:
-		console.log(`No command named ${cli.input[0]}`)
+		console.log(chalk.red(`No command named ${cli.input[0]}`))
 		break;
 }

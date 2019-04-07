@@ -1,13 +1,27 @@
 'use strict';
 
 const fs = require('fs-extra');
+const yaml = require('js-yaml')
+const chalk = require("chalk")
 const unzip = require('unzip');
 const path = require('path');
 
 const appDir = `${process.cwd()}`
 
 module.exports = {
-	init: async function() {
+	init: async function(cli) {
+		const bucketName = cli.flags["bucket"]
+		const stackName = cli.flags["stack"]
+
+		if (bucketName == undefined || bucketName == '') {
+			console.log(chalk.red("Missing bucket name param that will be used for storage"));
+			return
+		}
+		if (stackName == undefined || stackName == '') {
+			console.log(chalk.red("Missing stack name for the CloudFormation deployment"));
+			return
+		}
+
 		var templateDir = `${path.dirname(require.main.filename)}/template`;
 
 		await fs.mkdirSync(`${appDir}/app`, { recursive: true })
@@ -27,5 +41,13 @@ module.exports = {
 				console.log(`${files[i].file} already exists`);
 			}
 		}
+
+		const rocketsamConfig = `${appDir}${files[1].prefix}/${files[1].file}`
+		var rocketsamConfigYaml = yaml.safeLoad(fs.readFileSync(rocketsamConfig, 'utf8'));
+
+		rocketsamConfigYaml["storageBucketName"] = bucketName
+		rocketsamConfigYaml["stackName"] = stackName
+
+		fs.writeFileSync(rocketsamConfig, yaml.safeDump(rocketsamConfigYaml))
 	}
 }

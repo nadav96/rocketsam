@@ -9,6 +9,14 @@ module.exports = {
 				endpoint: {
 					type: 'string',
 					alias: 'e'
+				},
+				bucket: {
+					type: 'string',
+					alias: 'b'
+				},
+				stack: {
+					type: 'string',
+					alias: 's'
 				}
 			}
 		})

@@ -1,7 +1,7 @@
 'use strict';
 
 const Q = require('q');
-	const fs = require('fs-extra')
+const fs = require('fs-extra')
 const zipFolder = require('folder-zip-sync')
 const { readdirSync, statSync } = require('fs-extra')
 const { join } = require('path')

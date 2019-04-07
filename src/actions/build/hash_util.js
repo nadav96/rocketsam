@@ -19,8 +19,12 @@ module.exports = {
 function dirsumPromise(dir) {
 	var deferred = Q.defer();
 	dirsum.digest(dir, 'sha1', function(err, hashes) {
+		var requirementsHash = undefined
+		if (hashes["files"] != undefined) {
+			requirementsHash = hashes["files"]["requirements.txt"]
+		}
 		deferred.resolve({
-			requirements: hashes.files["requirements.txt"],
+			requirements: requirementsHash,
 			total: hashes.hash
 		})
 	})

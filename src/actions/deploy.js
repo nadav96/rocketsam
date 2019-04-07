@@ -1,7 +1,8 @@
 'use strict';
 
+const Q = require('q');
 const fs = require('fs-extra');
-const { spawnSync } = require('child_process');
+const { spawnSync, spawn } = require('child_process');
 const chalk = require("chalk")
 const path = require('path')
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
@@ -17,40 +18,56 @@ async function deployProject() {
     return
   }
 
-  samPackageProject(settings.buildDir, settings.storageBucketName)
-  samDeployProject(settings.buildDir, settings.stackName)
+  await samPackageProject(settings.buildDir, settings.storageBucketName)
+  await samDeployProject(settings.buildDir, settings.stackName)
 }
 
 function samPackageProject(buildDir, storageBucketName) {
-
-  const ps = spawnSync('sam',
+  var deferred = Q.defer();
+  
+  var child = spawn('sam',
     ["package",
     "--template-file", `${buildDir}/template.yaml`,
     "--output-template-file", `${buildDir}/.packaged.yaml`,
     "--s3-bucket", storageBucketName],
-    { encoding: 'utf-8' , shell: true});
-  if (ps.status == 0) {
-    console.log("done packaging");
-  }
-  else {
-    console.log(chalk.red("Failed packaging the project, please check your template file"))
-    console.log(ps);
-  }
+    { encoding: 'utf-8' , shell: true})
+
+  child.stdout.on('data', function(code) {
+    process.stdout.write(code);
+  })
+  
+  child.stderr.on('data', function(error) {
+    process.stderr.write(error);
+  })
+
+  child.on('close', function(code) {
+    deferred.resolve()
+  })
+
+  return deferred.promise
 }
 
 function samDeployProject(buildDir, stackName) {
-  const ps = spawnSync('sam',
+  var deferred = Q.defer();
+
+  const child = spawn('sam',
     ["deploy",
     "--template-file", `${buildDir}/.packaged.yaml`,
     "--stack-name", stackName,
     "--capabilities","CAPABILITY_IAM"],
-    { encoding: 'utf-8' , shell: true});
-  if (ps.status == 0) {
-    console.log("done deploying");
-  }
-  else {
-    console.log(chalk.red("Failed deploying the project, please check your template file"))
-  }
+    { encoding: 'utf-8' , shell: true})
+  
+  child.stdout.on('data', function(code) {
+    process.stdout.write(code);
+  })
 
-  console.log(ps);
+  child.stderr.on('data', function(error) {
+    process.stderr.write(error);
+  })
+
+  child.on('close', function(code) {
+    deferred.resolve()
+  })
+
+  return deferred.promise
 }

@@ -32,9 +32,13 @@ module.exports = {
       case "event":
         const eventType = cli.input[2]
         const functionName = cli.input[3]
-
+        var endpoint = cli.flags['endpoint']
+        if(endpoint == '' || endpoint == undefined) {
+          endpoint = `/${functionName}`
+        }
+        
         if (eventType != undefined && functionName != undefined) {
-          addEventToFunction(eventType, functionName)
+          addEventToFunction(eventType, functionName, endpoint)
         }
         else {
           console.log("rocketsam add event ${api/bucket} ${functionName}");
@@ -66,7 +70,7 @@ async function addBucket(bucketName) {
   fs.writeFileSync(templateFile, yaml.safeDump(doc))
 }
 
-async function addEventToFunction(eventType, functionName) {
+async function addEventToFunction(eventType, functionName, endpoint) {
   const skeletonTemplateFile = `${appDir}/template-skeleton.yaml`
   const templateFile = `${appDir}/${functionName}/template.yaml`
   try {
@@ -78,7 +82,7 @@ async function addEventToFunction(eventType, functionName) {
         functionDoc["SammyApiEvent"] = {
           isAuthenticated: false,
           excludeSecurity: false,
-          path: "/demo",
+          path: endpoint,
           method: "get"
         }
         break;

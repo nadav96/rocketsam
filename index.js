@@ -30,7 +30,7 @@ switch(cli.input[0]) {
 	case "status":
 		require(`${actionsPath}/status.js`).status()
 		break;
-	case "local-api":
+	case "local":
 		require(`${actionsPath}/local-api.js`).samStartLocalApi()
 		break
 	case "deploy":

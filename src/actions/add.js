@@ -26,7 +26,7 @@ module.exports = {
             addBucket(bucketName)
         }
         else {
-          console.log("sammy add bucket ${bucketName}");
+          console.log("rocketsam add bucket ${bucketName}");
         }
         break
       case "event":
@@ -37,7 +37,7 @@ module.exports = {
           addEventToFunction(eventType, functionName)
         }
         else {
-          console.log("sammy add event ${api/bucket} ${functionName}");
+          console.log("rocketsam add event ${api/bucket} ${functionName}");
         }
         break
     }

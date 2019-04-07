@@ -27,9 +27,14 @@ module.exports = {
 
 			const templateFile = `${appDir}/${dir}/template.yaml`
 			var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
-			if (doc.IsApi) {
-				const isApiStatus = chalk.yellow(doc.Events.Main.Properties.Path)
-				console.log("Api: " + isApiStatus)
+			if (doc["SammyApiEvent"] != undefined) {
+				const isApiStatus = chalk.yellow(doc["SammyApiEvent"]["path"])
+				console.log(chalk.bold("Api: ") + isApiStatus)
+			}
+			if (doc["SammyBucketEvent"] != undefined) {
+				console.log(chalk.bold("bucket: ") + `${doc["SammyBucketEvent"]["bucketName"]}, ${doc["SammyBucketEvent"]["bucketEvent"]}`);
+				console.log(yaml.safeDump(doc["SammyBucketEvent"]["Rules"]));
+				
 			}
 			console.log()
 		})

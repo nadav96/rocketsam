@@ -39,6 +39,9 @@ switch(cli.input[0]) {
 	case "outputs":
 		require(`${actionsPath}/outputs.js`).getOutputs()
 		break
+	case "logs":
+		require(`${actionsPath}/logs.js`).getLogs(cli.input[1])
+		break
 	case "remove":
 		require(`${actionsPath}/remove.js`).remove()
 		break

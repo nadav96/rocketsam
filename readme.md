@@ -5,13 +5,12 @@ A CLI made to build and deploy microservices in AWS (extending AWS SAM).
 Currently the project supports lambda written in python 3.6, but can easily be extended to support more languages.
 
 ## Why Rocketsam?
-Good question, even though there are many third party solution for deploying and building microservices on AWS, I found that they all lack some feature or another.
+Good question, even though there are many third party solutions for deploying and building microservices on AWS, I found that they all lack some basic features.
 
-### Advantages of Rocketsam
+## Advantages of Rocketsam
 * Template per function instead of gigantic template file (the CLI will append to the app skeleton each of the functions template)
 * Caching per function, this CLI will upload only functions that their build output has changed (using hash validation).
-* the robust build command, which allowes building specific functions, and it will build only when changes are detected.
-* The build command support python dependencies (it will be installed using docker).
+* The build command support python dependencies (it will be installed using docker and cached in the build folder).
 * Seamless deployment of the microservice using Cloud Formation.
 * Easy access to API url's and logs of each function using **logs** and **outputs** commands.
 * Running a local version of the server using SAM local.
@@ -49,8 +48,23 @@ In order to use the CLI, one must install [AWS SAM](https://aws.amazon.com/serve
 16. The rocketsam config file, details below
 
 ## The function template file
-...
+![Folder structure](./img/functionyaml.png)
 
+The way this template works is that the CLI has special keys: **Name, SammyApiEvent and SammyBucketEvent** which determine the name of the function in the template, an optional api event which called the function and an optional bucket event which trigger the function (if the bucket exist in the microservice and policies allow access). All other keys in the template will imported as is to the function part in the template (marked **[ASIS]**).
+
+* (line 1) The function name in the template and in the AWS cloud
+* (line 2) [ASIS] the max time allowed for the function to run
+* (line 3-5)[ASIS] env variables available to the function
+* (line 6-19) [ASIS] policies for the function
+* (line 20-24) rocketsam custom key to state api event
+  * (line 21) ignored, in the future will be as additonal indictator to the autorizer.
+  * (line 22) if lambda autorizer is, it will use this boolean to determine if the authorizer will be enabled on this function endpoint.
+  * (line 23) the endpoint of the function api
+  * (line 24) the method used to access the endpoint (GET POST PUT etc...)
+* (line 25-32) rocketsam custom key to state bucket event
+    * (line 26) the bucket name (stated in the skeleton template)
+    * (line 27) the bucket event
+    * (line 28 - 32) rules for the event to trigger, imported as is to the resulting bucket event
 ## The Rocketsam config file
 ...
 

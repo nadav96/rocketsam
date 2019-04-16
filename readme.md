@@ -84,10 +84,11 @@ For instance:
 Will fetch from the common folder two files and placed them in the function resulting zip (can be viewed as symlinks in the function app dir)
 
 The result:
+
 ![common result](./img/commonresult.png)
 
 This is not limited to python files only, you can place any files and reference them in the same way.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details

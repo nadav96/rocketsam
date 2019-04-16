@@ -81,7 +81,7 @@ For instance:
 
 ![common syntax](./img/commonsyntax.png)
 
-Will fetch from the common (excluded from the path name) folder two files and placed them in the function resulting zip (can be viewed as symlinks in the function app dir)
+Will fetch from the common folder two files and placed them in the function resulting zip (can be viewed as symlinks in the function app dir)
 
 The result:
 ![common result](./img/commonresult.png)

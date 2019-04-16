@@ -66,7 +66,27 @@ The way this template works is that the CLI has special keys: **Name, SammyApiEv
     * (line 27) the bucket event
     * (line 28 - 32) rules for the event to trigger, imported as is to the resulting bucket event
 ## The Rocketsam config file
-...
+![Folder structure](./img/rocketsamyaml.png)
+
+* (line 1) the application dir which will contain the code of the microservice. use '$' to indicate the workspace path
+* (line 2) the build dir which the CLI will build to. use '$' to indicate the workspace path
+* (line 3) the common dir path. use '$' to indicate the workspace path
+* (line 4) the bucket name which will be used to store the functions code (during deploy). must exist beforehand
+* (line 5) the stack name used in AWS Cloud Formation
+
+## Other magic
+In the app there is a special folder called common (can be defined in the rocketsam config). the files in these folder can be shared across functions using a special syntax placed at the top of the function code file.
+
+For instance:
+
+![common syntax](./img/commonsyntax.png)
+
+Will fetch from the common (excluded from the path name) folder two files and placed them in the function resulting zip (can be viewed as symlinks in the function app dir)
+
+The result:
+![common result](./img/commonresult.png)
+
+This is not limited to python files only, you can place any files and reference them in the same way.
 
 ## License
 

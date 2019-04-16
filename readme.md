@@ -2,7 +2,7 @@
 
 ![Folder structure](./img/rocketsam.png)
 
-A CLI made to build and deploy microservices in AWS (extending AWS SAM).
+A CLI made to build and deploy microservices in AWS.
 
 Currently the project supports lambda written in python 3.6, but can easily be extended to support more languages.
 

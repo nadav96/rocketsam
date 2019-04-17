@@ -9,6 +9,10 @@ exports.help = function () {
   console.log();
   console.log(chalk.bold("* Usage"));
   printCommandHelp("$ rocketsam init", "initialize the rocketsam project")
+  console.log(chalk.bold("-b | --bucket") + " (optional) - the storage bucket name, must be in the same region as the microservice!");
+  console.log(chalk.bold("-s | --stack") + " (optional) - the stack name");
+  console.log(chalk.bold("-r | --region") + " (optional) - the microservice region");
+
   console.log();
 
   printCommandHelp("$ rocketsam create {1}", `Creates a new lambda function in the project (a simple folder)`)

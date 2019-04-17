@@ -7,24 +7,6 @@
     "type": "git",
     "url": "https://github.com/nadav96/rocketsam"
   },
-  "keywords": [],
-  "author": "Nadav Goldstein",
-  "license": "MIT",
-  "dependencies": {
-    "aws-sdk": "^2.433.0",
-    "del": "^4.0.0",
-    "dirsum": "^0.1.1",
-    "folder-zip-sync": "^1.0.5",
-    "fs-extra": "^7.0.1",
-    "js-yaml": "^3.13.0",
-    "meow": "^5.0.0",
-    "node-option": "0.0.6",
-    "q": "^1.5.1",
-    "unzip": "^0.1.11"
-  },
-  "bin": {
-    "rocketsam": "./index.js"
-  },
   "keywords": [
     "rocket sam",
     "rocketsam",
@@ -37,5 +19,23 @@
     "aws lambda",
     "amazon",
     "amazon web services"
-  ]
+  ],
+  "author": "Nadav Goldstein",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.433.0",
+    "del": "^4.0.0",
+    "dirsum": "^0.1.1",
+    "folder-zip-sync": "^1.0.5",
+    "fs-extra": "^7.0.1",
+    "inquirer": "^6.3.1",
+    "js-yaml": "^3.13.0",
+    "meow": "^5.0.0",
+    "node-option": "0.0.6",
+    "q": "^1.5.1",
+    "unzip": "^0.1.11"
+  },
+  "bin": {
+    "rocketsam": "./index.js"
+  }
 }

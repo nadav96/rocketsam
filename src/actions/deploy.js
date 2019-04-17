@@ -18,18 +18,19 @@ async function deployProject() {
     return
   }
 
-  await samPackageProject(settings.buildDir, settings.storageBucketName)
-  await samDeployProject(settings.buildDir, settings.stackName)
+  await samPackageProject(settings.buildDir, settings.storageBucketName, settings.region)
+  await samDeployProject(settings.buildDir, settings.stackName, settings.region)
 }
 
-function samPackageProject(buildDir, storageBucketName) {
+function samPackageProject(buildDir, storageBucketName, region) {
   var deferred = Q.defer();
-  
+
   var child = spawn('sam',
     ["package",
     "--template-file", `${buildDir}/template.yaml`,
     "--output-template-file", `${buildDir}/.packaged.yaml`,
-    "--s3-bucket", storageBucketName],
+    "--s3-bucket", storageBucketName,
+    "--region", region],
     { encoding: 'utf-8' , shell: true})
 
   child.stdout.on('data', function(code) {
@@ -47,14 +48,15 @@ function samPackageProject(buildDir, storageBucketName) {
   return deferred.promise
 }
 
-function samDeployProject(buildDir, stackName) {
+function samDeployProject(buildDir, stackName, region) {
   var deferred = Q.defer();
 
   const child = spawn('sam',
     ["deploy",
     "--template-file", `${buildDir}/.packaged.yaml`,
     "--stack-name", stackName,
-    "--capabilities","CAPABILITY_IAM"],
+    "--capabilities","CAPABILITY_IAM",
+    "--region", region],
     { encoding: 'utf-8' , shell: true})
   
   child.stdout.on('data', function(code) {

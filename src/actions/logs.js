@@ -7,9 +7,6 @@ const yaml = require('js-yaml')
 const fs = require('fs-extra');
 
 const AWS = require("aws-sdk")
-AWS.config.update({region:'eu-west-1'});
-
-var cloudwatch = new AWS.CloudWatchLogs();
 
 exports.getLogs = async function (functionName) {
     const settings = await settingsParser()
@@ -22,6 +19,10 @@ exports.getLogs = async function (functionName) {
         console.log(chalk.red("Invalid function name supplied"));
         return
     }
+
+    AWS.config.update({region: settings.region});
+    var cloudwatch = new AWS.CloudWatchLogs();
+
     
     const templatePath = `${settings.appDir}/${functionName}/template.yaml`
     
@@ -51,11 +52,11 @@ exports.getLogs = async function (functionName) {
     var lastEventId = undefined
     while (true) {
         sleep(1 * 1000)
-        lastEventId = await printLogsForName(logGroupName, lastEventId)
+        lastEventId = await printLogsForName(cloudwatch, logGroupName, lastEventId)
     }
 }
 
-async function printLogsForName(logGroupName, lastEventId) {
+async function printLogsForName(cloudwatch, logGroupName, lastEventId) {
     var params = {
         logGroupName: logGroupName,
         // Five minutes earlier

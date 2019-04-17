@@ -7,9 +7,6 @@ const path = require('path')
 const AWS = require("aws-sdk")
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
-AWS.config.update({region:'eu-west-1'});
-var cloudformation = new AWS.CloudFormation();
-
 
 module.exports = {
   remove: async function() {
@@ -19,12 +16,18 @@ module.exports = {
       return
     }
 
+    AWS.config.update({region: settings.region});
+    var cloudformation = new AWS.CloudFormation();
+
     console.log("Removing stack");
 
-    const ps = spawnSync("aws", ["cloudformation", "delete-stack", "--stack-name", settings.stackName], { encoding: 'utf-8' })
+    var params = {
+      StackName: settings.stackName
+    };
+    await cloudformation.deleteStack(params).promise()
     
     var i = 0
-    while (await getStackExists(settings.stackName, i) == true) {
+    while (await getStackExists(cloudformation, settings.stackName, i) == true) {
       await sleep(1*500)
       i += 1
     }    
@@ -35,7 +38,7 @@ module.exports = {
 
 const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
 
-async function getStackExists(stackName, i) {
+async function getStackExists(cloudformation, stackName, i) {
   var params = {
     StackName: stackName
   };

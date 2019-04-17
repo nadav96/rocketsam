@@ -17,6 +17,10 @@ module.exports = {
 				stack: {
 					type: 'string',
 					alias: 's'
+				},
+				region: {
+					type: 'string',
+					alias: 'r'
 				}
 			}
 		})

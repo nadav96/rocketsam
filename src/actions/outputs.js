@@ -4,9 +4,6 @@ const chalk = require("chalk")
 const path = require('path')
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 const AWS = require("aws-sdk")
-AWS.config.update({region:'eu-west-1'});
-
-var cloudformation = new AWS.CloudFormation();
 
 exports.getOutputs = async function () {
   const settings = await settingsParser()
@@ -14,6 +11,10 @@ exports.getOutputs = async function () {
     console.log(chalk.red("Project not configured, aborting outputs"));
     return
   }
+  
+  AWS.config.update({region: settings.region});
+  var cloudformation = new AWS.CloudFormation();
+
   var params = {
     StackName: settings.stackName
   };

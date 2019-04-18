@@ -35,7 +35,6 @@ async function createTemplate() {
   await fs.copyFileSync(`${appDir}/template-skeleton.yaml`, skeletonTemplateFile)
 
   const functions = await getFunctions()
-  console.log(functions);
   for (var i = 0; i < functions.length; i++) {
     await appendFunctionTemplate(functions[i])
   }
@@ -75,11 +74,11 @@ async function appendFunctionTemplate(functionName) {
     }
 
     if (functionDoc["SammyApiEvent"] != undefined) {
-      console.log("api event available")
+      console.log(`* ${functionName} api event available`)
       addApiEventToFunction(functionDoc, skeletonDoc)
     }
     if (functionDoc["SammyBucketEvent"] != undefined) {
-      console.log("Bucket event available")
+      console.log(`* ${functionName} bucket event available`)
       addBucketEventToFunction(functionDoc, skeletonDoc)
     }
 

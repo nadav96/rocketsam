@@ -12,6 +12,7 @@ const del = require('del')
 var dirsum = require('dirsum');
 var chalk = require('chalk');
 var installUtil = require('./build/install_util')
+var templateCreation = require(`./template`)
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
 var appDir = undefined
@@ -29,7 +30,7 @@ module.exports = {
 		else {
 			console.log(chalk.red("Project not configured, aborting build"));
 			return
-		}
+		}		
 
 		const dirsFunction = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory() && f != "common")
 
@@ -67,6 +68,10 @@ module.exports = {
 		else {
 			await parseOptionResults(result)
 		}
+
+		console.log(chalk.yellow("\ntemplate:"));
+		
+		await templateCreation.createTemplate()		
 	}
 }
 

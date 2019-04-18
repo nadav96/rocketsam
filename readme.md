@@ -25,6 +25,25 @@ For more info, run rocketsam help
 npm install -g rocketsam
 ```
 
+```bash
+# create the project
+rocketsam init
+# add function to the project
+rocketsam create hello
+# append api event to the project '/hello' (visible in the function yaml)
+rocketsam add event api hello -e /hello
+# build all of the functions and creates a SAM template
+rocketsam build all
+# deploy the stack to AWS
+rocketsam deploy
+
+# Get the api url's
+rocketsam outputs
+
+# view the logs of hello function as they arrive
+rocketsam logs hello
+```
+
 ### Prerequisites
 
 In order to use the CLI, one must install [AWS SAM](https://aws.amazon.com/serverless/sam/), as well as [Docker](https://www.docker.com/) (in order to spin a local server and to install dependencies)

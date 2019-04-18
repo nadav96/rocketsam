@@ -44,6 +44,10 @@ module.exports = {
           console.log("rocketsam add event ${api/bucket} ${functionName}");
         }
         break
+      default:
+        console.log(chalk.red(`incorrect syntax: ${cli.input[1]}`));
+        console.log("rocketsam add event ${api/bucket} ${functionName}");
+        break
     }
   }
 }
@@ -107,11 +111,15 @@ async function addEventToFunction(eventType, functionName, endpoint) {
           console.log("No bucket available for event");
         }
         break
+      default:
+        console.log(chalk.red(`unknown event type supplied: ${eventType}`));
+        console.log("rocketsam add event ${api/bucket} ${functionName}");
+        break
     }
 
     fs.writeFileSync(templateFile, yaml.safeDump(functionDoc))
   }
   catch (e) {
-    console.log("error");
+    console.log(chalk.red(`function ${functionName} not found`));
   }
 }

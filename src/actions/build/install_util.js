@@ -32,7 +32,7 @@ async function buildContainer() {
   var deferred = Q.defer();
 
   const child = spawn('docker',
-    ['build', '-t', 'tests', `${scriptPath}/src/actions/build`],
+    ['build', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],
     { encoding: 'utf-8' })
   
   child.stdout.on('data', function(code) {
@@ -57,7 +57,7 @@ async function installPythonRequirements(appDir, buildDir, functionName) {
   const dockerCommand = ["run",
     "-v", `${appDir}:/app`,
     "-v", `${buildDir}:/build`,
-    "tests"
+    "rocketsam"
   ]
 
   const pipCommand = [`pip3`, `install`, `-r`,

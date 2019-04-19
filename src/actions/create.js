@@ -23,20 +23,6 @@ module.exports = {
 		}
 
 		if (name) {
-
-			const answers = await inquirer.prompt([
-				{
-				  type: 'list',
-				  name: 'value',
-				  message: 'select runtime:',
-				  choices: [
-					  "nodejs8.10",
-					  "python3.6"
-				  ]
-				}
-			  ])
-			const runtime = region = answers['value']
-
 			await fs.mkdirSync(`${appDir}/${name}`, { recursive: true })
 
 			const files = ["function.py", "requirements.txt", "template.yaml"]

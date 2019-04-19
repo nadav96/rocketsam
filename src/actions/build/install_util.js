@@ -4,6 +4,7 @@ const { spawnSync } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra')
 const del = require('del')
+const chalk = require('chalk')
 
 module.exports = {
   isDockerAvailable: isDockerAvailable,
@@ -39,7 +40,6 @@ async function installPythonRequirements(appDir, buildDir, functionName) {
   const dockerCommand = ["run",
     "-v", `${appDir}:/app`,
     "-v", `${buildDir}:/build`,
-    "-v", `${scriptPath}:/scripts`,
     "tests"
   ]
 
@@ -56,7 +56,8 @@ async function installPythonRequirements(appDir, buildDir, functionName) {
     console.log("Installed requirements successfully");
   }
   else {
-    console.log("Failed install requirements");
+    console.log(chalk.red("Failed install requirements"));
+    console.log(run["stderr"]);
   }
 
   return run.status == 0

@@ -3,8 +3,12 @@
 'use strict';
 const cli = require('./src/meow.js').getCli();
 const chalk = require("chalk")
-
+const updateNotifier = require('update-notifier');
+const pkg = require('./package.json');
+ 
 const actionsPath = "./src/actions"
+
+updateNotifier({pkg}).notify();
 
 switch(cli.input[0]) {
 	// RocketSam CLI

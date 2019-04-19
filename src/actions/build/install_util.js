@@ -1,6 +1,7 @@
 'use strict';
 
-const { spawnSync } = require('child_process');
+const Q = require('q');
+const { spawnSync, spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra')
 const del = require('del')
@@ -25,15 +26,31 @@ function isDockerAvailable() {
   return true
 }
 
-function buildContainer() {
+async function buildContainer() {
   const scriptPath = path.dirname(require.main.filename)
-  const build = spawnSync('docker',
-    ['build', '-t', 'tests', `${scriptPath}/actions/build`],
+
+  var deferred = Q.defer();
+
+  const child = spawn('docker',
+    ['build', '-t', 'tests', `${scriptPath}/src/actions/build`],
     { encoding: 'utf-8' })
+  
+  child.stdout.on('data', function(code) {
+    process.stdout.write(code);
+  })
+
+  child.stderr.on('data', function(error) {
+    process.stderr.write(chalk.red(error));
+  })
+
+  child.on('close', function(code) {
+    deferred.resolve()
+  })
+
+  return deferred.promise
 }
 
 async function installPythonRequirements(appDir, buildDir, functionName) {
-  const scriptPath = path.dirname(require.main.filename)
   await fs.mkdirSync(`${buildDir}/.requirements/${functionName}`, { recursive: true })
   await del([`${buildDir}/.requirements/${functionName}/*`]);
 

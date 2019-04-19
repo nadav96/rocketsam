@@ -5,6 +5,7 @@ const unzip = require('unzip');
 const yaml = require('js-yaml');
 const path = require('path');
 const chalk = require("chalk")
+var inquirer = require('inquirer');
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
 var appDir = undefined
@@ -22,6 +23,20 @@ module.exports = {
 		}
 
 		if (name) {
+
+			const answers = await inquirer.prompt([
+				{
+				  type: 'list',
+				  name: 'value',
+				  message: 'select runtime:',
+				  choices: [
+					  "nodejs8.10",
+					  "python3.6"
+				  ]
+				}
+			  ])
+			const runtime = region = answers['value']
+
 			await fs.mkdirSync(`${appDir}/${name}`, { recursive: true })
 
 			const files = ["function.py", "requirements.txt", "template.yaml"]
@@ -30,14 +45,14 @@ module.exports = {
 				await fs.copyFileSync(filePath, `${appDir}/${name}/${files[i]}`);
 			};
 
-		try {
-			const templateFile = `${appDir}/${name}/template.yaml`
-			var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
-			doc.Name = `${name}Function`
-			fs.writeFileSync(templateFile, yaml.safeDump(doc))
-		} catch (e) {
-		  console.log(e);
-		}
+			try {
+				const templateFile = `${appDir}/${name}/template.yaml`
+				var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
+				doc.Name = `${name}Function`
+				fs.writeFileSync(templateFile, yaml.safeDump(doc))
+			} catch (e) {
+			console.log(e);
+			}
 
 		}
 		else {

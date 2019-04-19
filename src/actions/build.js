@@ -76,6 +76,8 @@ module.exports = {
 }
 
 async function parseOptionResults(results) {
+	await installUtil.buildContainer()
+
 	for (var i = 0; i < results.length; i++) {
 		const dep = await getDependencies(`${appDir}/${results[i]}/function.py`)
 		dep.shift()

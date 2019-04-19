@@ -23,18 +23,42 @@ module.exports = {
 		}
 
 		if (name) {
+			const answers = await inquirer.prompt([
+				{
+				  type: 'list',
+				  name: 'value',
+				  message: 'select runtime:',
+				  choices: [
+					  "nodejs8.10",
+					  "python3.6"
+				  ]
+				}
+			  ])
+			const runtime = answers['value']
+
 			await fs.mkdirSync(`${appDir}/${name}`, { recursive: true })
 
-			const files = ["function.py", "requirements.txt", "template.yaml"]
+			var files = ["template.yaml"]
+
+			switch(runtime) {
+				case "python3.6":
+					files = files.concat(["python3.6/function.py", "python3.6/requirements.txt"])
+					break
+				case "nodejs8.10":
+					files = files.concat(["node8.1/function.js", "node8.1/package.json"])
+					break
+			}
+
 			for (var i = 0; i < files.length; i++) {
-				const filePath = `${scriptDir}/template/function/${files[i]}`
-				await fs.copyFileSync(filePath, `${appDir}/${name}/${files[i]}`);
+				const filePath = `${scriptDir}/template/${files[i]}` 
+				await fs.copyFileSync(filePath, `${appDir}/${name}/${path.basename(filePath)}`);
 			};
 
 			try {
 				const templateFile = `${appDir}/${name}/template.yaml`
 				var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
 				doc.Name = `${name}Function`
+				doc.Runtime = runtime
 				fs.writeFileSync(templateFile, yaml.safeDump(doc))
 			} catch (e) {
 			console.log(e);

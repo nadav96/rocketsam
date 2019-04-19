@@ -22,6 +22,9 @@ function dirsumPromise(dir) {
 		var requirementsHash = undefined
 		if (hashes["files"] != undefined) {
 			requirementsHash = hashes["files"]["requirements.txt"]
+			if(requirementsHash == undefined) {
+				requirementsHash = hashes["files"]["package.json"]
+			}
 		}
 		deferred.resolve({
 			requirements: requirementsHash,

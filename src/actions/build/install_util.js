@@ -3,6 +3,7 @@
 const Q = require('q');
 const { spawnSync, spawn } = require('child_process');
 const path = require('path');
+const yaml = require('js-yaml')
 const fs = require('fs-extra')
 const del = require('del')
 const chalk = require('chalk')
@@ -10,6 +11,7 @@ const chalk = require('chalk')
 module.exports = {
   isDockerAvailable: isDockerAvailable,
   buildContainer: buildContainer,
+  install: install,
   installPythonRequirements: installPythonRequirements,
   copyRequirementsToFunction: copyRequirementsToFunction
 }
@@ -50,6 +52,20 @@ async function buildContainer() {
   return deferred.promise
 }
 
+async function install(appDir, buildDir, functionName) {
+  const templateFile = `${appDir}/${functionName}/template.yaml`  
+  var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
+
+  console.log(doc.Runtime);
+
+  switch(doc.Runtime) {
+    case "python3.6":
+      return await installPythonRequirements(appDir, buildDir, functionName)
+    case "nodejs8.10":
+      return await installNodeRequirements(appDir, buildDir, functionName)
+  }
+}
+
 async function installPythonRequirements(appDir, buildDir, functionName) {
   await fs.mkdirSync(`${buildDir}/.requirements/${functionName}`, { recursive: true })
   await del([`${buildDir}/.requirements/${functionName}/*`]);
@@ -63,6 +79,35 @@ async function installPythonRequirements(appDir, buildDir, functionName) {
   const pipCommand = [`pip3`, `install`, `-r`,
     `/app/${functionName}/requirements.txt`,
     `-t`, `/build/.requirements/${functionName}`]
+
+  const fullCommand = dockerCommand.concat(pipCommand)
+
+  const run = spawnSync('docker', fullCommand,
+    { encoding: 'utf-8' })
+
+  if (run.status == 0) {
+    console.log("Installed requirements successfully");
+  }
+  else {
+    console.log(chalk.red("Failed install requirements"));
+    console.log(run["stderr"]);
+  }
+
+  return run.status == 0
+}
+
+async function installNodeRequirements(appDir, buildDir, functionName) {
+  await fs.mkdirSync(`${buildDir}/.requirements/${functionName}`, { recursive: true })
+  await del([`${buildDir}/.requirements/${functionName}/*`]);
+
+  const dockerCommand = ["run",
+    "-v", `${appDir}:/app`,
+    "-v", `${buildDir}:/build`,
+    "rocketsam"
+  ]
+  
+  const pipCommand = [`npm`, `install`, `/app/${functionName}`,
+    `--prefix`, `/build/.requirements/${functionName}`]
 
   const fullCommand = dockerCommand.concat(pipCommand)
 

@@ -186,8 +186,7 @@ async function functionBuildFolder(functionName, dependencies) {
 		if (newHash.requirements != oldHash.requirements) {
 			console.log(chalk.green("(m) requirements"))
 
-			installResult = await installUtil
-				.installPythonRequirements(appDir, buildDir , functionName)
+			installResult = await installUtil.install(appDir, buildDir, functionName)
 			installUtil.copyRequirementsToFunction(buildDir, functionName)
 
 			newHash = await hashUtil.calculateHashForDirectoy(functionBuildFolder)

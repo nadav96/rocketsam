@@ -9,23 +9,22 @@ const del = require('del')
 const chalk = require('chalk')
 
 module.exports = {
-  isDockerAvailable: isDockerAvailable,
   buildContainer: buildContainer,
   install: install,
-  installPythonRequirements: installPythonRequirements,
   copyRequirementsToFunction: copyRequirementsToFunction
 }
 
-function isDockerAvailable() {
-  const ps = spawnSync('docker',["image", "ls"], { encoding: 'utf-8' });
-  if (ps.error) {
-      console.log("Docker issues!");
-      return false
-  } else if (ps.status !== 0) {
-      console.log(`Docker issues, code: ${ps.status}`)
-      return false
-  }
-  return true
+async function version() {
+  var deferred = Q.defer();
+
+  const child = spawn('docker', ['run', 'rocketsam', 'cat', '/v.txt'],
+    { encoding: 'utf-8' })
+  
+  child.stdout.on('data', function(code) {
+    deferred.resolve(code)
+  })
+
+  return deferred.promise
 }
 
 async function buildContainer() {
@@ -33,30 +32,34 @@ async function buildContainer() {
 
   var deferred = Q.defer();
 
-  const child = spawn('docker',
-    ['build', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],
-    { encoding: 'utf-8' })
-  
-  child.stdout.on('data', function(code) {
-    process.stdout.write(code);
-  })
+  const dockerVersion = await version()
+  if (dockerVersion != 3) {
+    const child = spawn('docker',
+      ['build', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],
+      { encoding: 'utf-8' })
+    
+    child.stdout.on('data', function(code) {
+      process.stdout.write(code);
+    })
 
-  child.stderr.on('data', function(error) {
-    process.stderr.write(chalk.red(error));
-  })
+    child.stderr.on('data', function(error) {
+      process.stderr.write(chalk.red(error));
+    })
 
-  child.on('close', function(code) {
+    child.on('close', function(code) {
+      deferred.resolve()
+    })
+  }
+  else {
     deferred.resolve()
-  })
-
+  }
+  
   return deferred.promise
 }
 
 async function install(appDir, buildDir, functionName) {
   const templateFile = `${appDir}/${functionName}/template.yaml`  
   var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
-
-  console.log(doc.Runtime);
 
   switch(doc.Runtime) {
     case "python3.6":

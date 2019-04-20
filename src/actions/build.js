@@ -79,7 +79,14 @@ async function parseOptionResults(results) {
 	await installUtil.buildContainer()
 
 	for (var i = 0; i < results.length; i++) {
-		const dep = await getDependencies(`${appDir}/${results[i]}/function.py`)
+		var functionFilePath = `${appDir}/${results[i]}`
+		if (fs.existsSync(`${functionFilePath}/function.py`)) {
+			functionFilePath += "/function.py"
+		}
+		else if (fs.existsSync(`${functionFilePath}/function.js`)) {
+			functionFilePath += "/function.js"
+		}
+		const dep = await getDependencies(functionFilePath)
 		dep.shift()
 
 		console.log(chalk.yellow(`${results[i]}:`) + chalk.bold(` ${dep.length}`) + ` common dependencies`)

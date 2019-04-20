@@ -4,7 +4,7 @@
 
 A CLI made to build and deploy microservices in AWS.
 
-Currently the project supports lambda written in python 3.6, but can easily be extended to support more languages.
+Currently the project supports lambda written in python 3.6 or node 8.1, but can easily be extended to support more languages in the future.
 
 ## Why Rocketsam?
 Good question, even though there are many third party solutions for deploying and building microservices on AWS, I found that they all lack some basic features.
@@ -12,7 +12,7 @@ Good question, even though there are many third party solutions for deploying an
 ## Advantages of Rocketsam
 * Template per function instead of gigantic template file (the CLI will append to the app skeleton each of the functions template)
 * Caching per function, this CLI will upload only functions that their build output has changed (using hash validation).
-* The build command support python dependencies (it will be installed using docker and cached in the build folder).
+* The build command support python/node dependencies (it will be installed using docker and cached in the build folder).
 * Seamless deployment of the microservice using Cloud Formation.
 * Easy access to API url's and logs of each function using **logs** and **outputs** commands.
 * Running a local version of the server using SAM local.
@@ -108,7 +108,7 @@ The result:
 
 ![common result](./img/commonresult.png)
 
-This is not limited to python files only, you can place any files and reference them in the same way.
+This is not limited to python/node files only, you can place any files and reference them in the same way.
 
 ## License
 

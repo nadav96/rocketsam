@@ -70,6 +70,12 @@ async function install(appDir, buildDir, functionName) {
 }
 
 async function installPythonRequirements(appDir, buildDir, functionName) {
+  const isExist = fs.existsSync(`${appDir}/${functionName}/requirements.txt`)
+  if (!isExist) {
+    return true
+  }
+
+
   await fs.mkdirSync(`${buildDir}/.requirements/${functionName}`, { recursive: true })
   await del([`${buildDir}/.requirements/${functionName}/*`]);
 
@@ -85,18 +91,7 @@ async function installPythonRequirements(appDir, buildDir, functionName) {
 
   const fullCommand = dockerCommand.concat(pipCommand)
 
-  const run = spawnSync('docker', fullCommand,
-    { encoding: 'utf-8' })
-
-  if (run.status == 0) {
-    console.log("Installed requirements successfully");
-  }
-  else {
-    console.log(chalk.red("Failed install requirements"));
-    console.log(run["stderr"]);
-  }
-
-  return run.status == 0
+  return await runInstallCommand(fullCommand)
 }
 
 async function installNodeRequirements(appDir, buildDir, functionName) {
@@ -114,18 +109,29 @@ async function installNodeRequirements(appDir, buildDir, functionName) {
 
   const fullCommand = dockerCommand.concat(pipCommand)
 
-  const run = spawnSync('docker', fullCommand,
-    { encoding: 'utf-8' })
+  return await runInstallCommand(fullCommand)
+}
 
-  if (run.status == 0) {
-    console.log("Installed requirements successfully");
-  }
-  else {
-    console.log(chalk.red("Failed install requirements"));
-    console.log(run["stderr"]);
-  }
+function runInstallCommand(commandArray) {
+  var deferred = Q.defer();
 
-  return run.status == 0
+  const child = spawn('docker', commandArray,
+  { encoding: 'utf-8' })
+
+
+  child.stdout.on('data', function(code) {
+    process.stdout.write(code);
+  })
+
+  child.stderr.on('data', function(error) {
+    process.stderr.write(error);
+  })
+
+  child.on('close', function(code) {
+    deferred.resolve(code == 0)
+  })
+
+  return deferred.promise
 }
 
 async function copyRequirementsToFunction(buildDir, functionName) {

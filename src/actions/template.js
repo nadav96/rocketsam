@@ -189,21 +189,5 @@ function addBucketEventToFunction(functionDoc, skeletonDoc) {
     }
   }
 
-  // Add bucket access policy
-  skeletonDoc["Resources"][functionResourceName]["Properties"]["Policies"] = [
-    {
-      Statement: [
-        {
-          Action: ["s3:*"],
-          Effect: "Allow",
-          Resource: {
-            "Fn::Sub": "arn:aws:s3:::${bucketName}/*"
-          }
-        }
-      ],
-      Version: '2012-10-17'
-    }
-  ]
-
   return addBucketEventToFunction
 }

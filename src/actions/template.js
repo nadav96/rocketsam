@@ -143,14 +143,14 @@ function addApiEventToFunction(functionDoc, skeletonDoc) {
   // Now add to the actual function resource
   skeletonDoc["Resources"][functionResourceName]["Properties"]
     ["Events"]["ApiEvent"] = {
+      Type: "Api",
       Properties: {
         Method: method,
         Path: path,
         RestApiId: {
           Ref: "ApiGateway"
         }
-      },
-      Type: "Api"
+      }
   }
 
   if (skeletonDoc["Outputs"] == undefined) {
@@ -175,6 +175,7 @@ function addBucketEventToFunction(functionDoc, skeletonDoc) {
 
   skeletonDoc["Resources"][functionResourceName]["Properties"]
     ["Events"]["BucketEvent"] = {
+    Type: "S3",
     Properties: {
       Bucket: {
         Ref: bucketName

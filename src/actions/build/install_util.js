@@ -62,6 +62,7 @@ async function install(appDir, buildDir, functionName) {
   var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
 
   switch(doc.Runtime) {
+    case "python3.7":
     case "python3.6":
       return await installPythonRequirements(appDir, buildDir, functionName)
     case "nodejs8.10":

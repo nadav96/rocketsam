@@ -30,7 +30,8 @@ module.exports = {
 				  message: 'select runtime:',
 				  choices: [
 					  "nodejs8.10",
-					  "python3.6"
+					  "python3.6",
+					  "python3.7"
 				  ]
 				}
 			  ])
@@ -41,6 +42,7 @@ module.exports = {
 			var files = ["template.yaml"]
 
 			switch(runtime) {
+				case "python3.7":
 				case "python3.6":
 					files = files.concat(["python3.6/function.py", "python3.6/requirements.txt"])
 					break

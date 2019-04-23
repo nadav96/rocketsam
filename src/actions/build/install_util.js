@@ -33,7 +33,7 @@ async function buildContainer() {
   var deferred = Q.defer();
 
   const dockerVersion = await version()
-  if (dockerVersion != 3) {
+  if (dockerVersion != 4) {
     const child = spawn('docker',
       ['build', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],
       { encoding: 'utf-8' })
@@ -64,13 +64,13 @@ async function install(appDir, buildDir, functionName) {
   switch(doc.Runtime) {
     case "python3.7":
     case "python3.6":
-      return await installPythonRequirements(appDir, buildDir, functionName)
+      return await installPythonRequirements(appDir, buildDir, functionName, doc.Runtime)
     case "nodejs8.10":
       return await installNodeRequirements(appDir, buildDir, functionName)
   }
 }
 
-async function installPythonRequirements(appDir, buildDir, functionName) {
+async function installPythonRequirements(appDir, buildDir, functionName, runtime) {
   const isExist = fs.existsSync(`${appDir}/${functionName}/requirements.txt`)
   if (!isExist) {
     return true
@@ -86,10 +86,12 @@ async function installPythonRequirements(appDir, buildDir, functionName) {
     "rocketsam"
   ]
 
-  const pipCommand = [`pip3`, `install`, `-r`,
+  const pipCommand = [runtime, `-m`, `pip`, `install`, `-r`,
     `/app/${functionName}/requirements.txt`,
     `-t`, `/build/.requirements/${functionName}`]
 
+  console.log(pipCommand);
+  
   const fullCommand = dockerCommand.concat(pipCommand)
 
   return await runInstallCommand(fullCommand)

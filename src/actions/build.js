@@ -154,7 +154,12 @@ async function populateFunctionCommonFolder(functionName, dependencies, location
 		const srcTarget = `${dependencies[i]}`
 		const dstTarget = `${location}/${functionName}/common/${dependencyFilename}`
 		if (commonSymlinks) {
-			await fs.symlinkSync(srcTarget, dstTarget)
+			try {
+				await fs.symlinkSync(srcTarget, dstTarget)
+			}
+			catch (e) {
+
+			}
 		}
 		else {
 			await fs.copyFileSync(srcTarget, dstTarget);

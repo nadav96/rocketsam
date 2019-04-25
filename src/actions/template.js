@@ -11,6 +11,7 @@ var settingsParser = require(`${path.dirname(require.main.filename)}/src/setting
 
 var appDir = undefined
 var buildDir = undefined
+var resourcesDir = undefined
 var skeletonTemplateFile = undefined
 
 module.exports = {
@@ -19,6 +20,7 @@ module.exports = {
     if (settings != undefined) {
         appDir = settings.appDir
         buildDir = settings.buildDir
+        resourcesDir = settings.resourcesDir
         skeletonTemplateFile = `${buildDir}/template.yaml`
     }
     else {
@@ -37,7 +39,9 @@ async function createTemplate() {
   const functions = await getFunctions()
   for (var i = 0; i < functions.length; i++) {
     await appendFunctionTemplate(functions[i])
-  }
+  }  
+
+  addResourcesToTemplate()
 }
 
 async function getFunctions() {
@@ -74,11 +78,11 @@ async function appendFunctionTemplate(functionName) {
     }
 
     if (functionDoc["SammyApiEvent"] != undefined) {
-      console.log(`* ${functionName} api event available`)
+      console.log(`* ${chalk.yellow("API Event")} ${functionName} added`);
       addApiEventToFunction(functionDoc, skeletonDoc)
     }
     if (functionDoc["SammyBucketEvent"] != undefined) {
-      console.log(`* ${functionName} bucket event available`)
+      console.log(`* ${chalk.yellow("Bucket Event")} ${functionName} added`);
       addBucketEventToFunction(functionDoc, skeletonDoc)
     }
 
@@ -187,5 +191,29 @@ function addBucketEventToFunction(functionDoc, skeletonDoc) {
   }
 
   return addBucketEventToFunction
+}
+
+async function addResourcesToTemplate() {
+  const resources = await readdirSync(resourcesDir).filter(f => f.endsWith("yaml"))
+
+  var skeletonDoc = yaml.safeLoad(fs.readFileSync(skeletonTemplateFile, 'utf8'));
+
+  for (const resource of resources) {
+    try {
+      var resourceDoc = yaml.safeLoad(fs.readFileSync(`${appDir}/resources/${resource}`, 'utf8'));
+      if (skeletonDoc["Resources"] == undefined) {
+        skeletonDoc["Resources"] = {}
+      }
+      Object.keys(resourceDoc).forEach(key => {
+        console.log(`* ${chalk.yellow("Resource")} ${key} added`);
+        
+        skeletonDoc["Resources"][key] = resourceDoc[key]
+      })
+    }
+    catch (e) {
+      console.log(chalk.red(`${resource} is invalid`));
+    }
+  }
+  fs.writeFileSync(skeletonTemplateFile, yaml.safeDump(skeletonDoc))
 }
 

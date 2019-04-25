@@ -53,25 +53,33 @@ rocketsam logs hello
 
 In order to use the CLI, one must install [AWS SAM](https://aws.amazon.com/serverless/sam/), as well as [Docker](https://www.docker.com/) (in order to spin a local server and to install dependencies)
 
-### Folder structure
-![Folder structure](./img/structure.png)
+### App structure
 
-1. The build folder, contains all of the app's auto generated data
-2. the CLI uses the hash folder to detect changes in the code, removing this folder will force rebuilding of the entire microservice.
-3. hash of the function 'hello' dependencies
-4. hash of the function 'hello' code
-5. the Cloud Formation template created by SAM
-6. This folder contains all of the functions requirements installed via pip
-7. the function 'hello' requirements.
-8. the function 'hello' output dir before zipping (contains symlinks to relevant requirements and common folders).
-9. the function complete zip (with requirements and everything), the template will use this file as the function code to deploy to AWS.
-10. The app code, contains the skeleton template and all of the functions code.
-11. The function folder 'hello'
-12. The function 'hello' code itself
-13. The function requirements file (will install dependencies from here)
-14. the function template file, details below
-15. the skeleton template, will be copied to the build folder and each function template will be appended to it.
-16. The rocketsam config file, details below
+```
+├── app
+│   ├── common
+│   │   └── service.py
+│   ├── functions
+│   │   └── sample
+│   │       ├── common
+│   │       │   └── service.py -> $/app/common/service.py
+│   │       ├── function.py
+│   │       ├── requirements.txt
+│   │       └── template.yaml
+│   ├── resources
+│   │   ├── bucket.yaml
+│   │   └── cognitopool.yaml
+│   └── template-skeleton.yaml
+└── rocketsam.yaml
+```
+
+The app folder consists of three main folders: **common**, **functions** and **resources**
+
+**common** - contains files that can be shared across functions (more details below)
+
+**functions** - contains dirs representing functions in the microservice.
+
+**resources** - contains yaml files each treated as a resource in the resulting SAM template.
 
 ## The function template file
 ```yaml
@@ -128,6 +136,8 @@ appDir: $/app
 buildDir: $/.build
 # the common dir path. use '$' to indicate the workspace path
 commonDir: $/app/common
+# The resource folder path. use '$' to indicate the workspace path
+resourcesDir: $/app/resources
 # the bucket name which will be used to store the functions code (during deploy). must exist beforehand (rocketsam init has the option to create a new bucket)
 storageBucketName: SampleBucket
 # the stack name used in AWS Cloud Formation

@@ -59,8 +59,14 @@ module.exports = {
 		
 		var templateDir = `${path.dirname(require.main.filename)}/template`;
 
-		await fs.mkdirSync(`${appDir}/app`, { recursive: true })		
-
+		await fs.mkdirSync(`${appDir}/app/functions`, { recursive: true })		
+		await fs.mkdirSync(`${appDir}/app/resources`, { recursive: true })		
+		await fs.mkdirSync(`${appDir}/app/common`, { recursive: true })		
+		
+		fs.writeFileSync(`${appDir}/app/functions/.gitkeep`)
+		fs.writeFileSync(`${appDir}/app/resources/.gitkeep`)
+		fs.writeFileSync(`${appDir}/app/common/.gitkeep`)
+		
 		const files = [
 			{ prefix: "/app", file: "template-skeleton.yaml"},
 			{ prefix: "", file: "rocketsam.yaml"},

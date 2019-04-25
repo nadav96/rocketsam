@@ -13,6 +13,7 @@ async function parseSettings() {
       appDir: settings["appDir"].replace("$", process.cwd()),
       buildDir: settings["buildDir"].replace("$", process.cwd()),
       commonDir: settings["commonDir"].replace("$", process.cwd()),
+      resourcesDir: settings["resourcesDir"].replace("$", process.cwd()),
       storageBucketName: settings["storageBucketName"].replace("$", process.cwd()),
       stackName: settings["stackName"].replace("$", process.cwd()),
       region: settings["region"]

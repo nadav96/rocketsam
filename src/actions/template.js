@@ -36,12 +36,12 @@ async function createTemplate() {
   await fs.mkdirSync(`${buildDir}`, { recursive: true })
   await fs.copyFileSync(`${appDir}/template-skeleton.yaml`, skeletonTemplateFile)
 
+  addResourcesToTemplate()
+
   const functions = await getFunctions()
   for (var i = 0; i < functions.length; i++) {
     await appendFunctionTemplate(functions[i])
   }  
-
-  addResourcesToTemplate()
 }
 
 async function getFunctions() {

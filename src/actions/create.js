@@ -46,10 +46,10 @@ module.exports = {
 			switch(runtime) {
 				case "python3.7":
 				case "python3.6":
-					files = files.concat(["python3.6/function.py", "python3.6/requirements.txt"])
+					files = files.concat(["python3.6/function.py", "python3.6/requirements.txt", "python3.6/.gitignore"])
 					break
 				case "nodejs8.10":
-					files = files.concat(["node8.1/function.js", "node8.1/package.json"])
+					files = files.concat(["node8.1/function.js", "node8.1/package.json", "node8.1/.gitignore"])
 					break
 			}
 

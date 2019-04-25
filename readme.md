@@ -1,10 +1,15 @@
 # Rocketsam
 
-![Folder structure](./img/rocketsam.png)
+![Title](./img/rocketsam.png)
 
 A CLI made to build and deploy microservices in AWS.
 
-Currently the project supports lambda written in python 3.6 or node 8.1, but can easily be extended to support more languages in the future.
+Currently the project supports lambda written in python 3.6/3.7 or node 8.1, but can easily be extended to support more languages in the future.
+
+## Whats new with v.1.0.18?
+Functions are now under a dedicated functions dir inside the app dir (breaking change for projects built with eariler versions).
+To upgrade a project, simply create a functions folder inside the app folder, and move all of the functions folders to it.
+
 
 ## Why Rocketsam?
 Good question, even though there are many third party solutions for deploying and building microservices on AWS, I found that they all lack some basic features.

@@ -59,7 +59,7 @@ module.exports = {
 		
 		var templateDir = `${path.dirname(require.main.filename)}/template`;
 
-		await fs.mkdirSync(`${appDir}/app`, { recursive: true })
+		await fs.mkdirSync(`${appDir}/app`, { recursive: true })		
 
 		const files = [
 			{ prefix: "/app", file: "template-skeleton.yaml"},

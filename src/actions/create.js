@@ -37,7 +37,9 @@ module.exports = {
 			  ])
 			const runtime = answers['value']
 
-			await fs.mkdirSync(`${appDir}/${name}`, { recursive: true })
+			const functionDir = `${appDir}/functions/${name}`
+
+			await fs.mkdirSync(functionDir, { recursive: true })
 
 			var files = ["template.yaml"]
 
@@ -53,11 +55,11 @@ module.exports = {
 
 			for (var i = 0; i < files.length; i++) {
 				const filePath = `${scriptDir}/template/${files[i]}` 
-				await fs.copyFileSync(filePath, `${appDir}/${name}/${path.basename(filePath)}`);
+				await fs.copyFileSync(filePath, `${functionDir}/${path.basename(filePath)}`);
 			};
 
 			try {
-				const templateFile = `${appDir}/${name}/template.yaml`
+				const templateFile = `${functionDir}/template.yaml`
 				var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
 				doc.Name = `${name}Function`
 				doc.Runtime = runtime

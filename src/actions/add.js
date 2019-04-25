@@ -76,7 +76,7 @@ async function addBucket(bucketName) {
 
 async function addEventToFunction(eventType, functionName, endpoint) {
   const skeletonTemplateFile = `${appDir}/template-skeleton.yaml`
-  const templateFile = `${appDir}/${functionName}/template.yaml`
+  const templateFile = `${appDir}/functions/${functionName}/template.yaml`
   try {
     var skeletonnDoc = yaml.safeLoad(fs.readFileSync(skeletonTemplateFile, 'utf8'));
     var functionDoc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'))

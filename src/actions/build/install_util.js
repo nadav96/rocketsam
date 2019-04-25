@@ -58,7 +58,7 @@ async function buildContainer() {
 }
 
 async function install(appDir, buildDir, functionName) {
-  const templateFile = `${appDir}/${functionName}/template.yaml`  
+  const templateFile = `${appDir}/functions/${functionName}/template.yaml`  
   var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
 
   switch(doc.Runtime) {
@@ -71,7 +71,7 @@ async function install(appDir, buildDir, functionName) {
 }
 
 async function installPythonRequirements(appDir, buildDir, functionName, runtime) {
-  const isExist = fs.existsSync(`${appDir}/${functionName}/requirements.txt`)
+  const isExist = fs.existsSync(`${appDir}/functions/${functionName}/requirements.txt`)
   if (!isExist) {
     return true
   }
@@ -87,11 +87,9 @@ async function installPythonRequirements(appDir, buildDir, functionName, runtime
   ]
 
   const pipCommand = [runtime, `-m`, `pip`, `install`, `-r`,
-    `/app/${functionName}/requirements.txt`,
+    `/app/functions/${functionName}/requirements.txt`,
     `-t`, `/build/.requirements/${functionName}`]
 
-  console.log(pipCommand);
-  
   const fullCommand = dockerCommand.concat(pipCommand)
 
   return await runInstallCommand(fullCommand)
@@ -107,7 +105,7 @@ async function installNodeRequirements(appDir, buildDir, functionName) {
     "rocketsam"
   ]
   
-  const pipCommand = [`npm`, `install`, `/app/${functionName}`,
+  const pipCommand = [`npm`, `install`, `/app/functions/${functionName}`,
     `--prefix`, `/build/.requirements/${functionName}`]
 
   const fullCommand = dockerCommand.concat(pipCommand)
@@ -139,7 +137,7 @@ function runInstallCommand(commandArray) {
 
 async function copyRequirementsToFunction(buildDir, functionName) {
   const functionRequirementsFolder = `${buildDir}/.requirements/${functionName}`
-  const functionBuildFolder = `${buildDir}/${functionName}`
+  const functionBuildFolder = `${buildDir}/functions/${functionName}`
 
   try {
     const requirements = fs.readdirSync(functionRequirementsFolder)

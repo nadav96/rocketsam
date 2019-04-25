@@ -41,12 +41,12 @@ async function createTemplate() {
 }
 
 async function getFunctions() {
-  const dirsFunction = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory() && f != "common")
-  return await dirsFunction(appDir)
+  const dirsFunction = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory())
+  return await dirsFunction(`${appDir}/functions`)
 }
 
 async function appendFunctionTemplate(functionName) {
-  const templateFile = `${appDir}/${functionName}/template.yaml`
+  const templateFile = `${appDir}/functions/${functionName}/template.yaml`
   try {
     var skeletonDoc = yaml.safeLoad(fs.readFileSync(skeletonTemplateFile, 'utf8'));
     var functionDoc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'))
@@ -56,7 +56,7 @@ async function appendFunctionTemplate(functionName) {
     const env = functionDoc["Environment"]
 
     const staticFunctionPropertiesDoc = {
-      CodeUri: `./${functionName}.zip`,
+      CodeUri: `./functions/${functionName}.zip`,
       Handler: "function.handler",
       Runtime: "python3.6",
       Timeout: 10,
@@ -188,3 +188,4 @@ function addBucketEventToFunction(functionDoc, skeletonDoc) {
 
   return addBucketEventToFunction
 }
+

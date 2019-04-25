@@ -32,9 +32,9 @@ module.exports = {
 			return
 		}		
 
-		const dirsFunction = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory() && f != "common")
+		const dirsFunction = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory())
 
-		const dirs = dirsFunction(appDir)
+		const dirs = dirsFunction(`${appDir}/functions`)
 
 		var result = []
 		if (option == undefined) {
@@ -79,7 +79,7 @@ async function parseOptionResults(results) {
 	await installUtil.buildContainer()
 
 	for (var i = 0; i < results.length; i++) {
-		var functionFilePath = `${appDir}/${results[i]}`
+		var functionFilePath = `${appDir}/functions/${results[i]}`
 		if (fs.existsSync(`${functionFilePath}/function.py`)) {
 			functionFilePath += "/function.py"
 		}
@@ -141,18 +141,18 @@ async function getDependencies(filename, dependencies = []) {
 async function populateFunctionCommonFolder(functionName, dependencies, location=appDir, commonSymlinks=true) {
 	// Delete the previous function common folder
 
-	await del([`${location}/${functionName}/common`]);
+	await del([`${location}/functions/${functionName}/common`]);
 
 	for (var i = 0; i < dependencies.length; i++) {
 		const dependencyFilename = dependencies[i].split(`${commonDir}/`)[1]
 
 		// Create the common folder structure
 		const folderStructure = "common/" + path.dirname(dependencyFilename);
-		await fs.mkdirSync(`${location}/${functionName}/${folderStructure}`, { recursive: true })
+		await fs.mkdirSync(`${location}/functions/${functionName}/${folderStructure}`, { recursive: true })
 
 		// Link the dependency
 		const srcTarget = `${dependencies[i]}`
-		const dstTarget = `${location}/${functionName}/common/${dependencyFilename}`
+		const dstTarget = `${location}/functions/${functionName}/common/${dependencyFilename}`
 		if (commonSymlinks) {
 			try {
 				await fs.symlinkSync(srcTarget, dstTarget)
@@ -168,8 +168,8 @@ async function populateFunctionCommonFolder(functionName, dependencies, location
 }
 
 async function functionBuildFolder(functionName, dependencies) {
-	const functionBuildFolder = `${buildDir}/${functionName}`
-	const functionAppFolder = `${appDir}/${functionName}`
+	const functionBuildFolder = `${buildDir}/functions/${functionName}`
+	const functionAppFolder = `${appDir}/functions/${functionName}`
 
 	// Creates if not exists the build folder
 	//alongside the sub directories .hash and the function folder
@@ -178,7 +178,7 @@ async function functionBuildFolder(functionName, dependencies) {
 	// Delete the previous created build folder
 	await del([functionBuildFolder]);
 	// Copy the function app folder to the build folder
-	await fs.copy(`${appDir}/${functionName}`, functionBuildFolder)
+	await fs.copy(`${appDir}/functions/${functionName}`, functionBuildFolder)
 
 	// Delete the template folder in the function build folder
 	await del([`${functionBuildFolder}/template.yaml`])

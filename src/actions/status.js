@@ -21,11 +21,11 @@ module.exports = {
 			return
 		}
 
-		const dirs = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory() && f != "common")
-		dirs(appDir).forEach(function(dir) {
+		const dirs = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory())
+		dirs(`${appDir}/functions`).forEach(function(dir) {
 			console.log(chalk.green.bold("F: ") + chalk.green(dir))
 
-			const templateFile = `${appDir}/${dir}/template.yaml`
+			const templateFile = `${appDir}/functions/${dir}/template.yaml`
 			var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
 			if (doc["SammyApiEvent"] != undefined) {
 				const isApiStatus = chalk.yellow(doc["SammyApiEvent"]["path"])

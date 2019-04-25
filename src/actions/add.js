@@ -84,8 +84,7 @@ async function addEventToFunction(eventType, functionName, endpoint) {
     switch (eventType) {
       case "api":
         functionDoc["SammyApiEvent"] = {
-          isAuthenticated: false,
-          excludeSecurity: false,
+          authorizerName: null,
           path: endpoint,
           method: "get"
         }

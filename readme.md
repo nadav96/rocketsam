@@ -69,31 +69,67 @@ In order to use the CLI, one must install [AWS SAM](https://aws.amazon.com/serve
 16. The rocketsam config file, details below
 
 ## The function template file
-![Folder structure](./img/functionyaml.png)
+```yaml
+# The function name in the template and in the AWS cloud
+Name: hello
+# [ASIS] the max time allowed for the function to run
+Timeout: 10
+# [ASIS] The function runtime
+Runtime: python3.7
+# [ASIS] env variables available to the function
+Environment:
+  Variables:
+    demo: 1
+#[ASIS] policies for the function
+Policies:
+  - Version: '2012-10-17'
+    Statement:
+      - Effect: Allow
+        Action:
+          - 's3:*'
+        Resource:
+          - 'Fn::Sub': 'arn:aws:s3:::${bucketName}/*'
+# rocketsam custom key to state api event
+SammyApiEvent:
+  # If not null, rocketsame will set the authorizer to the one supplied here (must be added to the template)
+  authorizerName: MyCognitoAuthorizer
+  # the endpoint of the function api
+  path: /upload
+  # the method used to access the endpoint (GET POST PUT etc...)
+  method: post
+# rocketsam custom key to state bucket event
+SammyBucketEvent:
+  # the bucket name (stated in the skeleton template)
+  bucketName: MainBucket
+  # the bucket event
+  bucketEvent: 's3:ObjectCreated:*'
+  # rules for the event to trigger, imported as is to the resulting bucket event
+  Rules:
+    - Name: suffix
+      Value: .pdf
+    - Name: prefix
+      Value: uploads/
+
+
+```
 
 The way this template works is that the CLI has special keys: **Name, SammyApiEvent and SammyBucketEvent** which determine the name of the function in the template, an optional api event which called the function and an optional bucket event which trigger the function (if the bucket exist in the microservice and policies allow access). All other keys in the template will imported as is to the function part in the template (marked **[ASIS]**).
 
-* (line 1) The function name in the template and in the AWS cloud
-* (line 2) [ASIS] the max time allowed for the function to run
-* (line 3-5)[ASIS] env variables available to the function
-* (line 6-19) [ASIS] policies for the function
-* (line 20-24) rocketsam custom key to state api event
-  * (line 21) ignored, in the future will be as additonal indictator to the autorizer.
-  * (line 22) if lambda autorizer is, it will use this boolean to determine if the authorizer will be enabled on this function endpoint.
-  * (line 23) the endpoint of the function api
-  * (line 24) the method used to access the endpoint (GET POST PUT etc...)
-* (line 25-32) rocketsam custom key to state bucket event
-    * (line 26) the bucket name (stated in the skeleton template)
-    * (line 27) the bucket event
-    * (line 28 - 32) rules for the event to trigger, imported as is to the resulting bucket event
 ## The Rocketsam config file
-![Folder structure](./img/rocketsamyaml.png)
-
-* (line 1) the application dir which will contain the code of the microservice. use '$' to indicate the workspace path
-* (line 2) the build dir which the CLI will build to. use '$' to indicate the workspace path
-* (line 3) the common dir path. use '$' to indicate the workspace path
-* (line 4) the bucket name which will be used to store the functions code (during deploy). must exist beforehand
-* (line 5) the stack name used in AWS Cloud Formation
+```yaml
+# the application dir which will contain the code of the microservice. use '$' to indicate the workspace path
+appDir: $/app
+# the build dir which the CLI will build to. use '$' to indicate the workspace path
+buildDir: $/.build
+# the common dir path. use '$' to indicate the workspace path
+commonDir: $/app/common
+# the bucket name which will be used to store the functions code (during deploy). must exist beforehand (rocketsam init has the option to create a new bucket)
+storageBucketName: SampleBucket
+# the stack name used in AWS Cloud Formation
+stackName: ABCD
+# the stack region
+region: eu-west-1
+```
 
 ## Other magic
 In the app there is a special folder called common (can be defined in the rocketsam config). the files in these folder can be shared across functions using a special syntax placed at the top of the function code file.

@@ -92,8 +92,7 @@ async function appendFunctionTemplate(functionName) {
 function addApiEventToFunction(functionDoc, skeletonDoc) {
   const functionResourceName = functionDoc["Name"]
   const apiEvent = functionDoc["SammyApiEvent"]
-  const isAuthenticated = apiEvent["isAuthenticated"]
-  const excludeSecurity = apiEvent["excludeSecurity"]
+  const authorizerName = apiEvent["authorizerName"]
   const path = apiEvent["path"]
   const method = apiEvent["method"]
 
@@ -129,12 +128,10 @@ function addApiEventToFunction(functionDoc, skeletonDoc) {
       }
     }
   }
-  if (excludeSecurity == false) {
-    endpoint[method]["security"] = [
-      {
-        auth_tokenorizer: []
-      }
-    ]
+  if (authorizerName != null) {
+    const authObject = {}
+    authObject[authorizerName] = [] 
+    endpoint[method]["security"] = [authObject]
   }
 
   skeletonDoc["Resources"]["ApiGateway"]

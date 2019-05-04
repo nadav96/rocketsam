@@ -137,9 +137,19 @@ function addApiEventToFunction(functionDoc, skeletonDoc) {
     authObject[authorizerName] = [] 
     endpoint[method]["security"] = [authObject]
   }
+  
+  const pathObject = skeletonDoc["Resources"]["ApiGateway"]
+    ["Properties"]["DefinitionBody"]["paths"][path]
 
-  skeletonDoc["Resources"]["ApiGateway"]
-    ["Properties"]["DefinitionBody"]["paths"][path] = endpoint
+  if (pathObject == undefined) {
+    skeletonDoc["Resources"]["ApiGateway"]
+      ["Properties"]["DefinitionBody"]["paths"][path] = endpoint
+  }
+  else {
+    skeletonDoc["Resources"]["ApiGateway"]
+      ["Properties"]["DefinitionBody"]["paths"][path][method] = endpoint[method]  
+
+  }
 
   // Now add to the actual function resource
   skeletonDoc["Resources"][functionResourceName]["Properties"]
@@ -178,9 +188,7 @@ function addBucketEventToFunction(functionDoc, skeletonDoc) {
     ["Events"]["BucketEvent"] = {
     Type: "S3",
     Properties: {
-      Bucket: {
-        Ref: bucketName
-      },
+      Bucket: bucketName,
       Events: bucketEvent,
       Filter: {
         S3Key: {

@@ -20,11 +20,18 @@ async function samStartLocalApi() {
 
   var deferred = Q.defer();
 
-  const child = spawn('sam',[
-      "local",
-    "start-api",
+  var command = [
+    "local", "start-api",
     "-t", `${settings.buildDir}/template.yaml`
-  ], { encoding: 'utf-8' });
+  ]
+
+  const isEnvExists = await fs.existsSync(`${settings.buildDir}/env.json`)
+  if (isEnvExists) {
+    command.push("-n")
+    command.push(`${settings.buildDir}/env.json`)
+  }
+
+  const child = spawn('sam', command, { encoding: 'utf-8' });
 
   child.stdout.on('data', function(code) {
     process.stdout.write(code);

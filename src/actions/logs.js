@@ -24,7 +24,7 @@ exports.getLogs = async function (functionName) {
     var cloudwatch = new AWS.CloudWatchLogs();
 
     
-    const templatePath = `${settings.appDir}/${functionName}/template.yaml`
+    const templatePath = `${settings.appDir}/functions/${functionName}/template.yaml`
     
     var functionTemplateName = undefined
     try {

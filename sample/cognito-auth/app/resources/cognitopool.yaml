@@ -1,0 +1,19 @@
+CognitoUserPool:
+  Type: "AWS::Cognito::UserPool"
+  Properties:
+    MfaConfiguration: OFF
+    UsernameAttributes:
+      - email
+    Policies:
+      PasswordPolicy:
+        MinimumLength: 6
+        RequireLowercase: False
+        RequireNumbers: True
+        RequireSymbols: False
+        RequireUppercase: True
+CognitoUserPoolClient:
+  Type: "AWS::Cognito::UserPoolClient"
+  Properties:
+    GenerateSecret: False
+    UserPoolId:
+      Ref: CognitoUserPool

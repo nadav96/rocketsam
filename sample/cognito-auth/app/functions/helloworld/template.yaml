@@ -1,0 +1,10 @@
+Name: userHelloFunction
+Timeout: 10
+Environment:
+  Variables:
+    demo: 1
+Runtime: python3.7
+SammyApiEvent:
+  authorizerName: CognitoAuthorizer
+  path: /hello
+  method: get

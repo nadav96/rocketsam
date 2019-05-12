@@ -6,7 +6,7 @@ A CLI made to build and deploy microservices in AWS.
 
 Currently the project supports lambda written in python 3.6/3.7 or node 8.1, but can easily be extended to support more languages in the future.
 
-## Whats new with v.1.0.18?
+## Whats new
 Functions are now under a dedicated functions dir inside the app dir (breaking change for projects built with eariler versions).
 To upgrade a project, simply create a functions folder inside the app folder, and move all of the functions folders to it.
 
@@ -52,6 +52,11 @@ rocketsam logs hello
 ### Prerequisites
 
 In order to use the CLI, one must install [AWS SAM](https://aws.amazon.com/serverless/sam/), as well as [Docker](https://www.docker.com/) (in order to spin a local server and to install dependencies)
+
+## sample projects
+* [hello-world]("https://github.com/nadav96/rocketsam/sample/hello-world")
+
+* [cognito-auth]("https://github.com/nadav96/rocketsam/sample/cognito-auth")
 
 ### App structure
 

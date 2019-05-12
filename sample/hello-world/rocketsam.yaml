@@ -1,0 +1,7 @@
+appDir: $/app
+buildDir: $/.build
+commonDir: $/app/common
+resourcesDir: $/app/resources
+storageBucketName: rocketsam-bucket
+stackName: sample
+region: eu-west-1

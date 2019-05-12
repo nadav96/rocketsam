@@ -54,9 +54,9 @@ rocketsam logs hello
 In order to use the CLI, one must install [AWS SAM](https://aws.amazon.com/serverless/sam/), as well as [Docker](https://www.docker.com/) (in order to spin a local server and to install dependencies)
 
 ## sample projects
-* [hello-world]("https://github.com/nadav96/rocketsam/sample/hello-world")
+* [hello-world](sample/hello-world/readme.md)
 
-* [cognito-auth]("https://github.com/nadav96/rocketsam/sample/cognito-auth")
+* [cognito-auth](sample/cognito-auth/readme.md)
 
 ### App structure
 

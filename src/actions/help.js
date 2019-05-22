@@ -51,6 +51,10 @@ exports.help = function () {
   printCommandHelp("$ rocketsam logs {1}", `This command tails after the given function logs in cloud watch in the last 5 minutes, and prints new logs as they arrive`)
   console.log(chalk.bold("{1}") + " (*) - the function name");
   console.log();
+
+  printCommandHelp("$ rocketsam invoke {1}", `This command using sam CLI invokes the function in a similar env to prod (using docker). project must be built beforehand`)
+  console.log(chalk.bold("{1}") + " (*) - the function name");
+  console.log();
   
   printCommandHelp("$ rocketsam local", `This command spawn sam local api using docket (must build and template the project beforehand)`)
   console.log();

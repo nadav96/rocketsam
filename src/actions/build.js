@@ -93,7 +93,7 @@ async function parseOptionResults(results) {
 
 		await populateFunctionCommonFolder(results[i], dep)
 
-		await functionBuildFolder(results[i], [])
+		await functionBuildFolder(results[i], [])		
 	};
 }
 

@@ -39,6 +39,10 @@ rocketsam create hello
 rocketsam add event api hello -e /hello
 # build all of the functions and creates a SAM template
 rocketsam build all
+
+# Run the function in docker
+rocketsam invoke hello
+
 # deploy the stack to AWS
 rocketsam deploy
 

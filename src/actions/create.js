@@ -41,7 +41,7 @@ module.exports = {
 
 			await fs.mkdirSync(functionDir, { recursive: true })
 
-			var files = ["template.yaml"]
+			var files = ["template.yaml", "event.json"]
 
 			switch(runtime) {
 				case "python3.7":

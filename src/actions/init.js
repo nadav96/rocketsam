@@ -71,6 +71,7 @@ module.exports = {
 			{ prefix: "/app", file: "template-skeleton.yaml"},
 			{ prefix: "", file: "rocketsam.yaml"},
 			{ prefix: "", file: ".gitignore"},
+			{ prefix: "/app", file: "env.json"},
 		]
 		for (var i = 0; i < files.length; i++) {
 			const filePath = `${templateDir}/${files[i].file}`

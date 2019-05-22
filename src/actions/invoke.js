@@ -44,6 +44,8 @@ exports.invoke = async function (functionName) {
         ]
     ) 
 
+    const envPath = await createEnvFile(functionName, functionTemplateName, settings.appDir, settings.buildDir)
+
     if ( ! isExists[0] ) {
         console.log(chalk.red("build template missing, please build your project first"));
         
@@ -54,12 +56,15 @@ exports.invoke = async function (functionName) {
         return
     }
 
-    var child = spawn('sam', [
-            "local", "invoke", 
-            functionTemplateName,
-            "-t", buildTemplatePath,
-            "-e", functionEventPath
-        ],
+    const command = [
+        "local", "invoke", 
+        functionTemplateName,
+        "-t", buildTemplatePath,
+        "-e", functionEventPath,
+        "-n", envPath
+    ]
+
+    var child = spawn('sam', command,
         { encoding: 'utf-8' , shell: true, customFds: [0,1,2]})
 
     try {
@@ -74,4 +79,39 @@ exports.invoke = async function (functionName) {
     catch(e) {
 
     }
+}
+
+async function createEnvFile(functionName, functionTemplateName, appDir, buildDir) {
+    const buildEnvPath = `${buildDir}/env.json`
+    const functionEnv = {}
+
+    try {
+        // use the global settings if exists (the default values)
+        const globalEnv = JSON.parse(fs.readFileSync(`${appDir}/env.json`))
+        Object.assign(functionEnv, globalEnv);
+    }
+    catch (e) {
+
+    }
+
+    try {
+        // use the global settings if exists (the default values)
+        const globalEnv = JSON.parse(fs.readFileSync(`${appDir}/functions/${functionName}/env.json`))
+        Object.assign(functionEnv, globalEnv);
+    }
+    catch (e) {
+    }
+
+    var buildEnv = {}
+    try {
+        buildEnv = JSON.parse(fs.readFileSync(buildEnvPath))
+    }
+    catch (e) {
+    }
+
+    buildEnv[functionTemplateName] = functionEnv
+    
+    fs.writeJSONSync(buildEnvPath, buildEnv)
+    
+    return buildEnvPath
 }

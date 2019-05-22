@@ -12,8 +12,10 @@ const del = require('del')
 var dirsum = require('dirsum');
 var chalk = require('chalk');
 var installUtil = require('./build/install_util')
+var envBuilder = require('./build/env_type')
 var templateCreation = require(`./template`)
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
+
 
 var appDir = undefined
 var buildDir = undefined
@@ -92,6 +94,8 @@ async function parseOptionResults(results) {
 		console.log(chalk.yellow(`${results[i]}:`) + chalk.bold(` ${dep.length}`) + ` common dependencies`)
 
 		await populateFunctionCommonFolder(results[i], dep)
+
+		await envBuilder.buildEnvFile(results[i])
 
 		await functionBuildFolder(results[i], [])		
 	};

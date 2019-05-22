@@ -5,7 +5,7 @@ const path = require('path')
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 const yaml = require('js-yaml')
 const fs = require('fs-extra');
-const { spawnSync, spawn } = require('child_process');
+const { spawn } = require('child_process');
 
 exports.invoke = async function (functionName) {
     const settings = await settingsParser()

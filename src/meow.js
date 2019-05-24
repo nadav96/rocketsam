@@ -21,6 +21,10 @@ module.exports = {
 				region: {
 					type: 'string',
 					alias: 'r'
+				},
+				build: {
+					type: 'boolean',
+					alias: 'b'
 				}
 			}
 		})

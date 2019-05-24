@@ -6,8 +6,9 @@ var settingsParser = require(`${path.dirname(require.main.filename)}/src/setting
 const yaml = require('js-yaml')
 const fs = require('fs-extra');
 const { spawn } = require('child_process');
+const build = require("./build.js")
 
-exports.invoke = async function (functionName) {
+exports.invoke = async function (functionName, flags) {
     const settings = await settingsParser()
 
     if (settings == undefined) {
@@ -19,6 +20,10 @@ exports.invoke = async function (functionName) {
         console.log(chalk.red("Invalid function name supplied"));
         return
     }   
+
+    if (flags["build"]) {
+        await build.build(functionName)
+    }
 
     const templatePath = `${settings.appDir}/functions/${functionName}/template.yaml`
     

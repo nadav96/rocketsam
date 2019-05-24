@@ -54,6 +54,7 @@ exports.help = function () {
 
   printCommandHelp("$ rocketsam invoke {1}", `This command using sam CLI invokes the function in a similar env to prod (using docker). project must be built beforehand`)
   console.log(chalk.bold("{1}") + " (*) - the function name");
+  console.log(chalk.bold("-b | --build") + " (optional) - if set, the function will first built and only after finish run the invoke");
   console.log();
   
   printCommandHelp("$ rocketsam local", `This command spawn sam local api using docket (must build and template the project beforehand)`)

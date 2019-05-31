@@ -170,7 +170,7 @@ function addApiEventToFunction(functionDoc, skeletonDoc) {
   skeletonDoc["Outputs"][`${functionResourceName}Endpoint`] = {
     Description: "API Prod stage endpoint",
     Value: {
-      'Fn::Sub': `https://\${ApiGateway}.execute-api.\${AWS::Region}.amazonaws.com/prod${path}`
+      'Fn::Sub': `https://\${ApiGateway}.execute-api.\${AWS::Region}.amazonaws.com/\${ApiGateway.Stage}${path}`
     }
   }
 

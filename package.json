@@ -1,6 +1,6 @@
 {
   "name": "rocketsam",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "A CLI made to build and deploy microservices in AWS",
   "main": "index.js",
   "repository": {
@@ -23,13 +23,13 @@
   "author": "Nadav Goldstein",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.433.0",
-    "del": "^4.0.0",
+    "aws-sdk": "^2.466.0",
+    "del": "^4.1.1",
     "dirsum": "^0.1.1",
     "folder-zip-sync": "^1.0.5",
-    "fs-extra": "^7.0.1",
+    "fs-extra": "^8.0.1",
     "inquirer": "^6.3.1",
-    "js-yaml": "^3.13.0",
+    "js-yaml": "^3.13.1",
     "meow": "^5.0.0",
     "node-option": "0.0.6",
     "q": "^1.5.1",

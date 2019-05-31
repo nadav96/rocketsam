@@ -7,12 +7,14 @@ const path = require('path')
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
 var appDir = undefined
+var buildDir = undefined
 
 module.exports = {
   add: async function(cli) {
     const settings = await settingsParser()
 		if (settings != undefined) {
-				appDir = settings.appDir
+        appDir = settings.appDir
+        buildDir = settings.buildDir
 		}
 		else {
 			console.log(chalk.red("Project not configured, aborting add"));
@@ -75,10 +77,8 @@ async function addBucket(bucketName) {
 }
 
 async function addEventToFunction(eventType, functionName, endpoint) {
-  const skeletonTemplateFile = `${appDir}/template-skeleton.yaml`
   const templateFile = `${appDir}/functions/${functionName}/template.yaml`
   try {
-    var skeletonnDoc = yaml.safeLoad(fs.readFileSync(skeletonTemplateFile, 'utf8'));
     var functionDoc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'))
 
     switch (eventType) {
@@ -90,24 +90,19 @@ async function addEventToFunction(eventType, functionName, endpoint) {
         }
         break;
       case "bucket":
-        if (skeletonnDoc["Resources"]["MainBucket"] != undefined) {
-          functionDoc["SammyBucketEvent"] = {
-            bucketName: "MainBucket",
-            bucketEvent: "s3:ObjectCreated:*",
-            Rules: [
-              {
-                Name: "suffix",
-                Value: ".zip"
-              },
-              {
-                Name: "prefix",
-                Value: "uploads/"
-              }
-            ]
-          }
-        }
-        else {
-          console.log("No bucket available for event");
+        functionDoc["SammyBucketEvent"] = {
+          bucketName: "MainBucket",
+          bucketEvent: "s3:ObjectCreated:*",
+          Rules: [
+            {
+              Name: "suffix",
+              Value: ".zip"
+            },
+            {
+              Name: "prefix",
+              Value: "uploads/"
+            }
+          ]
         }
         break
       default:

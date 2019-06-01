@@ -91,7 +91,9 @@ async function addEventToFunction(eventType, functionName, endpoint) {
         break;
       case "bucket":
         functionDoc["SammyBucketEvent"] = {
-          bucketName: "MainBucket",
+          bucketName: {
+            Ref: "MainBucket"
+          },
           bucketEvent: "s3:ObjectCreated:*",
           Rules: [
             {

@@ -20,15 +20,19 @@ function dirsumPromise(dir) {
 	var deferred = Q.defer();
 	dirsum.digest(dir, 'sha1', function(err, hashes) {
 		var requirementsHash = undefined
+		var totalHash = ""
+
 		if (hashes && hashes["files"] != undefined) {
 			requirementsHash = hashes["files"]["requirements.txt"]
 			if(requirementsHash == undefined) {
 				requirementsHash = hashes["files"]["package.json"]
 			}
+			totalHash = hashes.hash
 		}
+
 		deferred.resolve({
 			requirements: requirementsHash,
-			total: hashes.hash
+			total: totalHash
 		})
 	})
 

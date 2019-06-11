@@ -25,6 +25,15 @@ module.exports = {
 				build: {
 					type: 'boolean',
 					alias: 'b'
+				},
+				prefix: {
+					type: 'string',
+					alias: 'p',
+					default: ''
+				},
+				trim: {
+					type: 'boolean',
+					alias: 't'					
 				}
 			}
 		})

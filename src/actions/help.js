@@ -46,6 +46,8 @@ exports.help = function () {
   console.log();
 
   printCommandHelp("$ rocketsam outputs", `This command will return the stack outputs (rocketsam automatically add functions api url to it)`)
+  console.log(chalk.bold("-p | --prefix") + " (optional) - if set, will loop on outputs and return only valus that start with the input");
+  console.log(chalk.bold("-t | --trim") + " (optional) - if set, will trim the prefix from each output");
   console.log();
 
   printCommandHelp("$ rocketsam logs {1}", `This command tails after the given function logs in cloud watch in the last 5 minutes, and prints new logs as they arrive`)

@@ -37,7 +37,7 @@ switch(cli.input[0]) {
 		require(`${actionsPath}/deploy.js`).deployProject()
 		break
 	case "outputs":
-		require(`${actionsPath}/outputs.js`).getOutputs()
+		require(`${actionsPath}/outputs.js`).getOutputs(cli.flags)
 		break
 	case "logs":
 		require(`${actionsPath}/logs.js`).getLogs(cli.input[1])

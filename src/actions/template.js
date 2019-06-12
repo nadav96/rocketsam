@@ -77,6 +77,8 @@ async function appendFunctionTemplate(functionName) {
       Properties: mergedFunctionPropertiesDoc
     }
 
+    addCloudwatchUrl(functionDoc, skeletonDoc)
+
     if (functionDoc["SammyApiEvent"] != undefined) {
       console.log(`* ${chalk.yellow("API Event")} ${functionName} added`);
       addApiEventToFunction(functionDoc, skeletonDoc)
@@ -92,6 +94,22 @@ async function appendFunctionTemplate(functionName) {
     console.log(e);
   }
 }
+
+function addCloudwatchUrl(functionDoc, skeletonDoc) {
+  const functionResourceName = functionDoc["Name"]
+
+  if (skeletonDoc["Outputs"] == undefined) {
+    skeletonDoc["Outputs"] = {}
+  }
+
+  skeletonDoc["Outputs"][`cloudwatch${functionResourceName}`] = {
+    Description: "cloudwatch url",
+    Value: {
+      'Fn::Sub': `https://\${AWS::Region}.console.aws.amazon.com/cloudwatch/home?region=\${AWS::Region}#logEventViewer:group=/aws/lambda/\${${functionResourceName}\};start=PT30S`
+    }
+  }
+}
+
 
 function addApiEventToFunction(functionDoc, skeletonDoc) {
   const functionResourceName = functionDoc["Name"]
@@ -171,6 +189,13 @@ function addApiEventToFunction(functionDoc, skeletonDoc) {
     Description: "API Prod stage endpoint",
     Value: {
       'Fn::Sub': `https://\${ApiGateway}.execute-api.\${AWS::Region}.amazonaws.com/\${ApiGateway.Stage}${path}`
+    }
+  }
+
+  skeletonDoc["Outputs"][`cloudwatch${functionResourceName}`] = {
+    Description: "cloudwatch url",
+    Value: {
+      'Fn::Sub': `https://\${AWS::Region}.console.aws.amazon.com/cloudwatch/home?region=\${AWS::Region}#logEventViewer:group=/aws/lambda/${functionResourceName};start=PT30S`
     }
   }
 

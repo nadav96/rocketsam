@@ -192,13 +192,6 @@ function addApiEventToFunction(functionDoc, skeletonDoc) {
     }
   }
 
-  skeletonDoc["Outputs"][`cloudwatch${functionResourceName}`] = {
-    Description: "cloudwatch url",
-    Value: {
-      'Fn::Sub': `https://\${AWS::Region}.console.aws.amazon.com/cloudwatch/home?region=\${AWS::Region}#logEventViewer:group=/aws/lambda/${functionResourceName};start=PT30S`
-    }
-  }
-
   return skeletonDoc
 }
 

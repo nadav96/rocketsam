@@ -34,6 +34,15 @@ module.exports = {
 				trim: {
 					type: 'boolean',
 					alias: 't'					
+				},
+				force: {
+					type: 'boolean',
+					alias: 'f'					
+				},
+				query: {
+					type: 'string',
+					alias: 'q',
+					default: ''				
 				}
 			}
 		})

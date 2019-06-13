@@ -47,7 +47,9 @@ exports.help = function () {
 
   printCommandHelp("$ rocketsam outputs", `This command will return the stack outputs (rocketsam automatically add functions api url to it)`)
   console.log(chalk.bold("-p | --prefix") + " (optional) - if set, will loop on outputs and return only valus that start with the input");
+  console.log(chalk.bold("-q | --query") + " (optional) - if set, will loop on outputs and return only valus that contain the input");
   console.log(chalk.bold("-t | --trim") + " (optional) - if set, will trim the prefix from each output");
+  console.log(chalk.bold("-f | --force") + " (optional) - if set, will ignore the cache and fetch from network the outptus");
   console.log();
 
   printCommandHelp("$ rocketsam logs {1}", `This command tails after the given function logs in cloud watch in the last 5 minutes, and prints new logs as they arrive`)
@@ -59,7 +61,7 @@ exports.help = function () {
   console.log(chalk.bold("-b | --build") + " (optional) - if set, the function will first built and only after finish run the invoke");
   console.log();
   
-  printCommandHelp("$ rocketsam local", `This command spawn sam local api using docket (must build and template the project beforehand)`)
+  printCommandHelp("$ rocketsam local", `This command spawn sam local api using docker (must build and template the project beforehand)`)
   console.log();
 
   printCommandHelp("$ rocketsam remove", `This will remove the stack from aws`)

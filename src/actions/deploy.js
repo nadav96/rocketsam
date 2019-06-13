@@ -18,6 +18,9 @@ async function deployProject() {
     return
   }
 
+  const outputsPath = `${settings.buildDir}/outputs.json`
+  await fs.removeSync(outputsPath)
+
   await samPackageProject(settings.buildDir, settings.storageBucketName, settings.region)
   await samDeployProject(settings.buildDir, settings.stackName, settings.region)
 }

@@ -186,6 +186,8 @@ async function functionBuildFolder(functionName, dependencies) {
 
 	// Delete the template folder in the function build folder
 	await del([`${functionBuildFolder}/template.yaml`])
+	await del([`${functionBuildFolder}/event.json`])
+	await del([`${functionBuildFolder}/env.json`])
 
 	// copy the old function requirements folder is exists
 	installUtil.copyRequirementsToFunction(buildDir, functionName)

@@ -46,12 +46,14 @@ module.exports = {
 			switch(runtime) {
 				case "python3.7":
 				case "python3.6":
-					files = files.concat(["python3.6/function.py", "python3.6/requirements.txt", "python3.6/.gitignore"])
+					files = files.concat(["python3.6/function.py", "python3.6/requirements.txt"])
 					break
 				case "nodejs8.10":
-					files = files.concat(["node8.1/function.js", "node8.1/package.json", "node8.1/.gitignore"])
+					files = files.concat(["node8.1/function.js", "node8.1/package.json"])
 					break
 			}
+
+			await fs.writeFileSync(`${functionDir}/.gitignore`, "common")
 
 			for (var i = 0; i < files.length; i++) {
 				const filePath = `${scriptDir}/template/${files[i]}` 

@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const { spawnSync, spawn } = require('child_process');
 const chalk = require("chalk")
 const path = require('path')
+const yaml = require('js-yaml')
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
 module.exports = {
@@ -21,8 +22,10 @@ async function deployProject() {
   const outputsPath = `${settings.buildDir}/outputs.json`
   await fs.removeSync(outputsPath)
 
+  const params = getTemplateParams(settings)
+  
   await samPackageProject(settings.buildDir, settings.storageBucketName, settings.region)
-  await samDeployProject(settings.buildDir, settings.stackName, settings.region)
+  await samDeployProject(settings.buildDir, settings.stackName, settings.region, params)
 }
 
 function samPackageProject(buildDir, storageBucketName, region) {
@@ -51,7 +54,7 @@ function samPackageProject(buildDir, storageBucketName, region) {
   return deferred.promise
 }
 
-function samDeployProject(buildDir, stackName, region) {
+function samDeployProject(buildDir, stackName, region, params) {
   var deferred = Q.defer();
 
   const child = spawn('sam',
@@ -59,7 +62,8 @@ function samDeployProject(buildDir, stackName, region) {
     "--template-file", `${buildDir}/.packaged.yaml`,
     "--stack-name", stackName,
     "--capabilities","CAPABILITY_IAM",
-    "--region", region],
+    "--region", region,
+    "--parameter-overrides", params],
     { encoding: 'utf-8' , shell: true})
   
   child.stdout.on('data', function(code) {
@@ -75,4 +79,18 @@ function samDeployProject(buildDir, stackName, region) {
   })
 
   return deferred.promise
+}
+
+function getTemplateParams(settings) {
+  const skeletonTemplateFile = `${settings.buildDir}/template.yaml`
+  const skeletonDoc = yaml.safeLoad(fs.readFileSync(skeletonTemplateFile, 'utf8'));
+  const params = skeletonDoc["Parameters"]
+
+  var result = ""
+  Object.keys(params).forEach(function(key) {
+    var val = params[key]["Default"];
+    result += `${key}='${val}' `
+  });
+
+  return result  
 }

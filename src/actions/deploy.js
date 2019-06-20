@@ -57,13 +57,18 @@ function samPackageProject(buildDir, storageBucketName, region) {
 function samDeployProject(buildDir, stackName, region, params) {
   var deferred = Q.defer();
 
-  const child = spawn('sam',
-    ["deploy",
+  var command = ["deploy",
     "--template-file", `${buildDir}/.packaged.yaml`,
     "--stack-name", stackName,
     "--capabilities","CAPABILITY_IAM",
-    "--region", region,
-    "--parameter-overrides", params],
+    "--region", region
+  ]
+
+  if (params && params.length > 0) {
+    command.push("--parameter-overrides", params)
+  }
+
+  const child = spawn('sam', command,
     { encoding: 'utf-8' , shell: true})
   
   child.stdout.on('data', function(code) {
@@ -86,11 +91,16 @@ function getTemplateParams(settings) {
   const skeletonDoc = yaml.safeLoad(fs.readFileSync(skeletonTemplateFile, 'utf8'));
   const params = skeletonDoc["Parameters"]
 
-  var result = ""
-  Object.keys(params).forEach(function(key) {
-    var val = params[key]["Default"];
-    result += `${key}='${val}' `
-  });
-
-  return result  
+  if (params) {
+    var result = ""
+    Object.keys(params).forEach(function(key) {
+      var val = params[key]["Default"];
+      result += `${key}='${val}' `
+    });
+  
+    return result  
+  }
+  else {
+    return null
+  }
 }

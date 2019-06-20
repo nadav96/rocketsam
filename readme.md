@@ -8,7 +8,7 @@ Currently the project supports lambda written in python 3.6/3.7 or node 8.1, but
 
 ## Whats new
 
-### 1.0.37 +
+### 1.0.38 +
 template params default value changes will update the template accordingly
 
 ## Why Rocketsam?

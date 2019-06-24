@@ -2,6 +2,8 @@
 
 ![Title](./img/rocketsam.png)
 
+[![npm version](https://badge.fury.io/js/rocketsam.svg)](https://badge.fury.io/js/rocketsam)
+
 A CLI made to build and deploy microservices in AWS.
 
 Currently the project supports lambda written in python 3.6/3.7 or node 8.1, but can easily be extended to support more languages in the future.

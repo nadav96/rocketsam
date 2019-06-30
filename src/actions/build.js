@@ -152,7 +152,7 @@ async function populateFunctionCommonFolder(functionName, dependencies, location
 
 		// Create the common folder structure
 		const folderStructure = "common/" + path.dirname(dependencyFilename);
-		await fs.mkdirSync(`${location}/functions/${functionName}/${folderStructure}`, { recursive: true })
+		await fs.mkdirsSync(`${location}/functions/${functionName}/${folderStructure}`)
 
 		// Link the dependency
 		const srcTarget = `${dependencies[i]}`
@@ -177,8 +177,8 @@ async function functionBuildFolder(functionName, dependencies) {
 
 	// Creates if not exists the build folder
 	//alongside the sub directories .hash and the function folder
-	await fs.mkdirSync(`${buildDir}/.hash`, { recursive: true })
-	await fs.mkdirSync(functionBuildFolder, { recursive: true })
+	await fs.mkdirsSync(`${buildDir}/.hash`)
+	await fs.mkdirsSync(functionBuildFolder)
 	// Delete the previous created build folder
 	await del([functionBuildFolder]);
 	// Copy the function app folder to the build folder

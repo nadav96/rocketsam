@@ -33,7 +33,7 @@ module.exports = {
 };
 
 async function createTemplate() {
-  await fs.mkdirSync(`${buildDir}`, { recursive: true })
+  await fs.mkdirsSync(`${buildDir}`)
   await fs.copyFileSync(`${appDir}/template-skeleton.yaml`, skeletonTemplateFile)
 
   addResourcesToTemplate()

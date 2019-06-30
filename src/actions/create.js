@@ -39,7 +39,7 @@ module.exports = {
 
 			const functionDir = `${appDir}/functions/${name}`
 
-			await fs.mkdirSync(functionDir, { recursive: true })
+			await fs.mkdirsSync(functionDir)
 
 			var files = ["template.yaml", "event.json"]
 

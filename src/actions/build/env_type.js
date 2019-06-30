@@ -65,7 +65,7 @@ async function createPythonEnvFile(functionName, functionDoc, skeletonDoc, appDi
 
     const commonFolderPath = `${appDir}/functions/${functionName}/common`
     if (!fs.existsSync(commonFolderPath)){
-        fs.mkdirSync(commonFolderPath);
+        fs.mkdirsSync(commonFolderPath);
     }
     fs.writeFileSync(`${commonFolderPath}/env.py`, output)
 }

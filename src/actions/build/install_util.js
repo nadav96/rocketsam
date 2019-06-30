@@ -77,7 +77,7 @@ async function installPythonRequirements(appDir, buildDir, functionName, runtime
   }
 
 
-  await fs.mkdirSync(`${buildDir}/.requirements/${functionName}`, { recursive: true })
+  await fs.mkdirsSync(`${buildDir}/.requirements/${functionName}`)
   await del([`${buildDir}/.requirements/${functionName}/*`]);
 
   const dockerCommand = ["run",
@@ -96,7 +96,7 @@ async function installPythonRequirements(appDir, buildDir, functionName, runtime
 }
 
 async function installNodeRequirements(appDir, buildDir, functionName) {
-  await fs.mkdirSync(`${buildDir}/.requirements/${functionName}`, { recursive: true })
+  await fs.mkdirsSync(`${buildDir}/.requirements/${functionName}`)
   await del([`${buildDir}/.requirements/${functionName}/*`]);
 
   const dockerCommand = ["run",

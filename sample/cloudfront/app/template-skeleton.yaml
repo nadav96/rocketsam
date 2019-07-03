@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: sammy app
+
+Parameters:
+  AcmCertificateArn:
+    Type: String
+    Description: >
+      The ARN of the SSL certificate to use for the CloudFront distribution.
+    Default: 'YOUR SSL CERTIFICATE ARN'
+  DomainName:
+    Type: String
+    Description: The website domain name.
+    Default: 'YOUR DOMAIN NAME'
+  ApiDomainName:
+    Type: String
+    Description: The website api url.
+    Default: 'YOUR API URL (ApiGateway)'
+  siteBucket:
+    Type: String
+    Description: the sites bucket name.
+    Default: 'YOUR SITE BUCKET NAME'
+  siteBucketPrefix:
+    Type: String
+    Description: the prefix that contain the site data.
+    Default: 'BUCKET PREFIX'
+
+Resources: {}
+
+Outputs:
+  distributionId:
+    Value: 
+      Fn::Sub: '${WebpageCDN}'   
+  WebsiteURL:
+    Value: 
+      Fn::Sub: 'https://${WebpageCDN.DomainName}'

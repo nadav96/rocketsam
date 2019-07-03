@@ -64,6 +64,8 @@ In order to use the CLI, one must install [AWS SAM](https://aws.amazon.com/serve
 
 * [cognito-auth](sample/cognito-auth)
 
+* [cloudfront](sample/cloudfront)
+
 ### App structure
 
 ```

@@ -1,0 +1,67 @@
+WebpageCDN:
+  Type: AWS::CloudFront::Distribution
+  Properties:
+    Tags:
+    - Key: Domain
+      Value: 
+        Ref: DomainName
+    DistributionConfig:
+      Comment:
+        Ref: DomainName
+      PriceClass: PriceClass_100
+      Enabled: true
+      DefaultRootObject: index.html
+      Aliases:
+        - Ref: DomainName
+      Origins:
+        - DomainName:
+            Fn::Sub: '${siteBucket}'
+          OriginPath:
+            Fn::Sub: '/${siteBucketPrefix}'
+          Id: webpage
+          CustomOriginConfig:
+            OriginProtocolPolicy: http-only
+        - DomainName:
+            Ref: ApiDomainName
+          Id: api
+          CustomOriginConfig:
+            OriginProtocolPolicy: https-only
+      DefaultCacheBehavior:
+        ForwardedValues:
+          QueryString: true
+        TargetOriginId: webpage
+        ViewerProtocolPolicy: redirect-to-https
+      CacheBehaviors:
+        - TargetOriginId: api
+          PathPattern: "/api/*"
+          ViewerProtocolPolicy: https-only
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+          Compress: true
+          ForwardedValues:
+            Headers:
+              - Accept
+              - Referer
+              - Authorization
+              - Content-Type
+            QueryString: true
+          MaxTTL: 0
+          MinTTL: 0
+      CustomErrorResponses: 
+        - ErrorCode: 403
+          ResponseCode: 200
+          ResponsePagePath: /index.html
+        - ErrorCode: 404
+          ResponseCode: 200
+          ResponsePagePath: /index.html
+      ViewerCertificate:
+        AcmCertificateArn: 
+          Ref: AcmCertificateArn
+        MinimumProtocolVersion: TLSv1
+        SslSupportMethod: sni-only

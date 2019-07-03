@@ -157,7 +157,7 @@ async function getDependencies(filename, dependencies, populate) {
 			console.log("creating missing dependency");
 			
 			fs.mkdirsSync(path.dirname(filename))
-			fs.writeFileSync(`${filename}`, "# EMPTY")
+			fs.writeFileSync(`${filename}`, "# ACTION: DELETE\n")
 
 			dependencies.push(filename)
 		}

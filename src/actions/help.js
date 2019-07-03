@@ -40,6 +40,9 @@ exports.help = function () {
   console.log(chalk.bold("-p | --populate") + " (optional) - if set, missing dependencies will be created in the common with Empty indicator");
   console.log();
 
+  printCommandHelp("$ rocketsam common action", `this command loop on all of the files in the common folder, in search for action comment (currently support only DELETE, which delete the file)`)
+  console.log();
+
   printCommandHelp("$ rocketsam template", "this command merge the skeleton template with each of the functions template into one big template file ready for deployment")
   console.log();
   

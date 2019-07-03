@@ -20,6 +20,9 @@ switch(cli.input[0]) {
 	case "build":
 		require(`${actionsPath}/build.js`).build(cli.input[1])
 		break;
+	case "common":
+		require(`${actionsPath}/common.js`).common()
+		break;
 	case "template":
 		require(`${actionsPath}/template.js`).createTemplate()
 		break

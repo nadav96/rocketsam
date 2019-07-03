@@ -11,6 +11,7 @@ const Selector = require('node-option')
 const del = require('del')
 var dirsum = require('dirsum');
 var chalk = require('chalk');
+const meow = require('meow');
 var installUtil = require('./build/install_util')
 var envBuilder = require('./build/env_type')
 var templateCreation = require(`./template`)
@@ -23,6 +24,8 @@ var commonDir = undefined
 
 module.exports = {
 	build: async function(option) {
+		const populate = getCli().flags.populate
+
 		const settings = await settingsParser()
 		if (settings != undefined) {
 				appDir = settings.appDir
@@ -65,10 +68,10 @@ module.exports = {
 			}
 		}
 		if (result.includes(1)) {
-			await parseOptionResults(dirs)
+			await parseOptionResults(dirs, populate)
 		}
 		else {
-			await parseOptionResults(result)
+			await parseOptionResults(result, populate)
 		}
 
 		console.log(chalk.yellow("\ntemplate:"));
@@ -77,7 +80,18 @@ module.exports = {
 	}
 }
 
-async function parseOptionResults(results) {
+function getCli() {
+	return meow('', {
+		flags: {
+			populate: {
+				type: 'boolean',
+				alias: 'p'
+			}
+		}
+	})
+}
+
+async function parseOptionResults(results, populate) {
 	await installUtil.buildContainer()
 
 	for (var i = 0; i < results.length; i++) {
@@ -88,7 +102,8 @@ async function parseOptionResults(results) {
 		else if (fs.existsSync(`${functionFilePath}/function.js`)) {
 			functionFilePath += "/function.js"
 		}
-		const dep = await getDependencies(functionFilePath)
+
+		const dep = await getDependencies(functionFilePath, [], populate)
 		dep.shift()
 
 		console.log(chalk.yellow(`${results[i]}:`) + chalk.bold(` ${dep.length}`) + ` common dependencies`)
@@ -101,7 +116,7 @@ async function parseOptionResults(results) {
 	};
 }
 
-async function getDependencies(filename, dependencies = []) {
+async function getDependencies(filename, dependencies, populate) {
 	if (filename == "") {
 		return dependencies
 	}
@@ -130,13 +145,22 @@ async function getDependencies(filename, dependencies = []) {
 				if (!dependencies.includes(files[i])) {
 					if (files[i] != "") {
 
-						dependencies = await getDependencies(`${commonDir}/${files[i]}`, dependencies)
+						dependencies = await getDependencies(`${commonDir}/${files[i]}`, dependencies, populate)
 					}
 				}
 			}
 		}
 	} catch (err) {
-		console.error(`missing dependency ${filename}`)
+		console.error(chalk.red(`missing dependency ${filename}`))
+
+		if (populate) {
+			console.log("creating missing dependency");
+			
+			fs.mkdirsSync(path.dirname(filename))
+			fs.writeFileSync(`${filename}`, "# EMPTY")
+
+			dependencies.push(filename)
+		}
 	}
 
 	return dependencies

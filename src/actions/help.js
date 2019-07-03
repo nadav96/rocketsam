@@ -37,6 +37,7 @@ exports.help = function () {
   
   printCommandHelp("$ rocketsam build {1}", `a command which builds one of the functions (or multiple), which includes zipping the function, installing python requirements and caching both`)
   console.log(chalk.bold("{1}") + " (optional) - name of the function to build, if 'all' is entered the command will build all of the functions ");
+  console.log(chalk.bold("-p | --populate") + " (optional) - if set, missing dependencies will be created in the common with Empty indicator");
   console.log();
 
   printCommandHelp("$ rocketsam template", "this command merge the skeleton template with each of the functions template into one big template file ready for deployment")

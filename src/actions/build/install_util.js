@@ -24,15 +24,26 @@ async function version() {
     deferred.resolve(code)
   })
 
+  child.stderr.on('data', function(error) {
+    deferred.reject()
+  })
+
   return deferred.promise
 }
 
 async function buildContainer() {
   const scriptPath = path.dirname(require.main.filename)
-
   var deferred = Q.defer();
 
-  const dockerVersion = await version()
+  var dockerVersion = 0
+  try {
+    dockerVersion = await version()
+  }
+  catch (e) {
+    console.log("container missing, proceed to create");
+    
+  }
+  
   if (dockerVersion != 4) {
     const child = spawn('docker',
       ['build', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],

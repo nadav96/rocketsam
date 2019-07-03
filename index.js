@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 'use strict';
-const cli = require('./src/meow.js').getCli();
+const meow = require('meow');
 const chalk = require("chalk")
 const updateNotifier = require('update-notifier');
 const pkg = require('./package.json');
@@ -10,10 +10,12 @@ const actionsPath = "./src/actions"
 
 updateNotifier({pkg}).notify();
 
+const cli = getCli()
+
 switch(cli.input[0]) {
 	// RocketSam CLI
 	case "init":
-		require(`${actionsPath}/init.js`).init(cli)
+		require(`${actionsPath}/init.js`).init()
 		break
 	case "build":
 		require(`${actionsPath}/build.js`).build(cli.input[1])
@@ -22,7 +24,7 @@ switch(cli.input[0]) {
 		require(`${actionsPath}/template.js`).createTemplate()
 		break
 	case "add":
-		require(`${actionsPath}/add.js`).add(cli)
+		require(`${actionsPath}/add.js`).add()
 		break
 	case "create":
 		require(`${actionsPath}/create.js`).create(cli.input[1])
@@ -37,13 +39,13 @@ switch(cli.input[0]) {
 		require(`${actionsPath}/deploy.js`).deployProject()
 		break
 	case "outputs":
-		require(`${actionsPath}/outputs.js`).getOutputs(cli.flags)
+		require(`${actionsPath}/outputs.js`).getOutputs()
 		break
 	case "logs":
 		require(`${actionsPath}/logs.js`).getLogs(cli.input[1])
 		break
 	case "invoke":
-		require(`${actionsPath}/invoke.js`).invoke(cli.input[1], cli.flags)
+		require(`${actionsPath}/invoke.js`).invoke(cli.input[1])
 		break
 	case "remove":
 		require(`${actionsPath}/remove.js`).remove()
@@ -54,4 +56,9 @@ switch(cli.input[0]) {
 	default:
 		console.log(chalk.red(`No command named ${cli.input[0]}`))
 		break;
+}
+
+function getCli() {
+	return meow('', {
+	})
 }

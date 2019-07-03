@@ -6,9 +6,12 @@ var settingsParser = require(`${path.dirname(require.main.filename)}/src/setting
 const yaml = require('js-yaml')
 const fs = require('fs-extra');
 const { spawn } = require('child_process');
+const meow = require('meow');
 const build = require("./build.js")
 
-exports.invoke = async function (functionName, flags) {
+exports.invoke = async function (functionName) {
+    const cli = getCli()
+
     const settings = await settingsParser()
 
     if (settings == undefined) {
@@ -21,7 +24,7 @@ exports.invoke = async function (functionName, flags) {
         return
     }   
 
-    if (flags["build"]) {
+    if (cli.flags["build"]) {
         await build.build(functionName)
     }
 
@@ -84,6 +87,17 @@ exports.invoke = async function (functionName, flags) {
     catch(e) {
 
     }
+}
+
+function getCli() {
+	return meow('', {
+		flags: {
+            build: {
+                type: 'boolean',
+                alias: 'b'
+            }
+		}
+	})
 }
 
 async function createEnvFile(functionName, functionTemplateName, appDir, buildDir) {

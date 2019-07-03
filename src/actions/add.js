@@ -4,13 +4,16 @@ const fs = require('fs-extra')
 const yaml = require('js-yaml');
 var chalk = require('chalk');
 const path = require('path')
+const meow = require('meow');
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
 var appDir = undefined
 var buildDir = undefined
 
 module.exports = {
-  add: async function(cli) {
+  add: async function() {
+    const cli = getCli()
+    
     const settings = await settingsParser()
 		if (settings != undefined) {
         appDir = settings.appDir
@@ -53,6 +56,18 @@ module.exports = {
     }
   }
 }
+
+function getCli() {
+	return meow('', {
+		flags: {
+      endpoint: {
+        type: 'string',
+        alias: 'e'
+      }
+		}
+	})
+}
+
 
 async function addBucket(bucketName) {
   const templateFile = `${appDir}/template-skeleton.yaml`

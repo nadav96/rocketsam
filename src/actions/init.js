@@ -7,6 +7,7 @@ const unzip = require('unzip');
 const path = require('path');
 var inquirer = require('inquirer');
 const AWS = require("aws-sdk")
+const meow = require('meow');
 
 
 const appDir = `${process.cwd()}`
@@ -31,7 +32,9 @@ const regions = [
 ]
 
 module.exports = {
-	init: async function(cli) {
+	init: async function() {
+		const cli = getCli()
+
 		var bucketName = cli.flags["bucket"]
 		var stackName = cli.flags["stack"]
 		var region = cli.flags["region"]
@@ -96,6 +99,25 @@ module.exports = {
 		console.log(chalk.green("Created rocketsam project"));
 		
 	}
+}
+
+function getCli() {
+	return meow('', {
+		flags: {
+			bucket: {
+				type: 'string',
+				alias: 'b'
+			},
+			stack: {
+				type: 'string',
+				alias: 's'
+			},
+			region: {
+				type: 'string',
+				alias: 'r'
+			}
+		}
+	})
 }
 
 async function getInput(message) {

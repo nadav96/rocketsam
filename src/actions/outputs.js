@@ -5,19 +5,22 @@ const fs = require('fs-extra')
 const path = require('path')
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 const AWS = require("aws-sdk")
+const meow = require('meow');
 
-exports.getOutputs = async function (flags) {
+exports.getOutputs = async function () {
+  const cli = getCli()
+  
   const settings = await settingsParser()
   if (settings == undefined) {
     console.log(chalk.red("Project not configured, aborting outputs"));
     return
   }
   
-  const prefix = flags["prefix"]
-  const query = flags["query"]
-  const trim = flags["trim"]
+  const prefix = cli.flags["prefix"]
+  const query = cli.flags["query"]
+  const trim = cli.flags["trim"]
 
-  const isForce = flags["force"]
+  const isForce = cli.flags["force"]
 
   try {
     var outputs = null
@@ -45,6 +48,31 @@ exports.getOutputs = async function (flags) {
     console.log(chalk.red("Error fetching stack, is it deployed?"));
   }
 };
+
+function getCli() {
+	return meow('', {
+		flags: {
+      prefix: {
+        type: 'string',
+        alias: 'p',
+        default: ''
+      },
+      trim: {
+        type: 'boolean',
+        alias: 't'					
+      },
+      force: {
+        type: 'boolean',
+        alias: 'f'					
+      },
+      query: {
+        type: 'string',
+        alias: 'q',
+        default: ''				
+      }
+		}
+	})
+}
 
 async function getOutputsFromCache(settings) {
   const outputsPath = `${settings.buildDir}/outputs.json`

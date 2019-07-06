@@ -4,7 +4,7 @@ const fs = require('fs-extra')
 const { readdirSync, statSync } = require('fs-extra')
 const { join } = require('path')
 const path = require('path')
-
+var glob = require("glob")
 const yaml = require('js-yaml')
 var chalk = require('chalk');
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
@@ -220,13 +220,15 @@ function addBucketEventToFunction(functionDoc, skeletonDoc) {
 }
 
 async function addResourcesToTemplate() {
-  const resources = await readdirSync(resourcesDir).filter(f => f.endsWith("yaml"))
+  const resources = glob.sync(`${resourcesDir}/**/*.yaml`, {
+    nodir: true
+  })
 
   var skeletonDoc = yaml.safeLoad(fs.readFileSync(skeletonTemplateFile, 'utf8'));
 
   for (const resource of resources) {
     try {
-      var resourceDoc = yaml.safeLoad(fs.readFileSync(`${appDir}/resources/${resource}`, 'utf8'));
+      var resourceDoc = yaml.safeLoad(fs.readFileSync(`${resource}`, 'utf8'));
       if (skeletonDoc["Resources"] == undefined) {
         skeletonDoc["Resources"] = {}
       }

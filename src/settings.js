@@ -16,6 +16,7 @@ async function parseSettings() {
         commonDir: settings["commonDir"].replace("$", process.cwd()),
         resourcesDir: settings["resourcesDir"].replace("$", process.cwd()),
         storageBucketName: settings["storageBucketName"].replace("$", process.cwd()),
+        storageBucketPrefix: settings["storageBucketPrefix"] ? settings["storageBucketPrefix"] : "", 
         stackName: settings["stackName"].replace("$", process.cwd()),
         region: settings["region"]
       }

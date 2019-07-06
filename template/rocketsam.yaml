@@ -3,5 +3,6 @@ buildDir: $/.build
 commonDir: $/app/common
 resourcesDir: $/app/resources
 storageBucketName: SampleBucket
+storageBucketPrefix: ""
 stackName: ABCD
 region: eu-west-1

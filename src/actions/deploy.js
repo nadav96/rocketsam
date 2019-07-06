@@ -24,20 +24,28 @@ async function deployProject() {
 
   const params = getTemplateParams(settings)
   
-  await samPackageProject(settings.buildDir, settings.storageBucketName, settings.region)
+  await samPackageProject(settings.buildDir, settings.storageBucketName, settings.storageBucketPrefix, settings.region)
   await samDeployProject(settings.buildDir, settings.stackName, settings.region, params)
 }
 
-function samPackageProject(buildDir, storageBucketName, region) {
+function samPackageProject(buildDir, storageBucketName, prefix, region) {
   var deferred = Q.defer();
 
-  var child = spawn('sam',
-    ["package",
+  var code =  [ "package",
     "--template-file", `${buildDir}/template.yaml`,
     "--output-template-file", `${buildDir}/.packaged.yaml`,
     "--s3-bucket", storageBucketName,
-    "--region", region],
-    { encoding: 'utf-8' , shell: true})
+    "--region", region
+  ]
+
+  if (prefix && prefix != "") {
+    code.push("--s3-prefix", prefix)
+  }
+
+  var child = spawn('sam',
+    code,
+    { encoding: 'utf-8' , shell: true}
+  )
 
   child.stdout.on('data', function(code) {
     process.stdout.write(code);

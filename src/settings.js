@@ -1,13 +1,12 @@
 'use strict';
 
-const fs = require('fs-extra');
-const yaml = require('js-yaml')
-const path = require('path');
+const safeLoadYaml = require("./actions/shared/load-yaml")
+
 const chalk = require('chalk')
 module.exports = parseSettings
 
 async function parseSettings() {
-  const settings = await getRocketSamSettings()
+  const settings = await safeLoadYaml(`${process.cwd()}/rocketsam.yaml`)
   if (settings != undefined) {
     try {
       return {
@@ -28,20 +27,5 @@ async function parseSettings() {
     }
   } else {
     return undefined
-  }
-}
-
-async function getPropertyFromSettings(property) {
-  const settings = await getRocketSamSettings()
-  return settings[property].replace("$", process.cwd())
-}
-
-async function getRocketSamSettings() {
-  try {
-    var doc = yaml.safeLoad(fs.readFileSync(`${process.cwd()}/rocketsam.yaml`, 'utf8'));
-    return doc
-  }
-  catch (e) {
-    console.log("rocketsam not found, is project configured?");
   }
 }

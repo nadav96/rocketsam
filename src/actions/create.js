@@ -2,6 +2,8 @@
 
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
+const safeLoadYaml = require("./shared/load-yaml")
+
 const path = require('path');
 const chalk = require("chalk")
 var inquirer = require('inquirer');
@@ -38,7 +40,7 @@ module.exports = {
 
 			const functionDir = `${appDir}/functions/${name}`
 
-			await fs.mkdirsSync(functionDir)
+			fs.mkdirsSync(functionDir)
 
 			var files = ["template.yaml", "event.json"]
 
@@ -52,19 +54,19 @@ module.exports = {
 					break
 			}
 
-			await fs.writeFileSync(`${functionDir}/.gitignore`, "common")
+			fs.writeFileSync(`${functionDir}/.gitignore`, "common")
 
 			for (var i = 0; i < files.length; i++) {
 				const filePath = `${scriptDir}/template/${files[i]}` 
-				await fs.copyFileSync(filePath, `${functionDir}/${path.basename(filePath)}`);
+				fs.copyFileSync(filePath, `${functionDir}/${path.basename(filePath)}`);
 			};
 
 			try {
 				const templateFile = `${functionDir}/template.yaml`
-				var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
+				var doc = await safeLoadYaml(templateFile);
 				doc.Name = `${name}Function`
 				doc.Runtime = runtime
-				fs.writeFileSync(templateFile, yaml.safeDump(doc))
+				fs.writeFileSync(templateFile, yaml.dump(doc))
 			} catch (e) {
 			console.log(e);
 			}

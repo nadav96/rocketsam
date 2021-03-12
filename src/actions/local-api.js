@@ -2,7 +2,7 @@
 
 const Q = require('q');
 const fs = require('fs-extra');
-const { spawnSync, spawn } = require('child_process');
+const { spawn } = require('child_process');
 const chalk = require("chalk")
 const path = require('path')
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)

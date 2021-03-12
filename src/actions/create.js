@@ -30,7 +30,7 @@ module.exports = {
 				  name: 'value',
 				  message: 'select runtime:',
 				  choices: [
-					  "nodejs8.10",
+					  "nodejs10.x",
 					  "python3.6",
 					  "python3.7"
 				  ]
@@ -49,8 +49,8 @@ module.exports = {
 				case "python3.6":
 					files = files.concat(["python3.6/function.py", "python3.6/requirements.txt"])
 					break
-				case "nodejs8.10":
-					files = files.concat(["node8.1/function.js", "node8.1/package.json"])
+				case "nodejs10.x":
+					files = files.concat(["node10.x/function.js", "node10.x/package.json"])
 					break
 			}
 

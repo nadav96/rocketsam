@@ -1,5 +1,7 @@
 'use strict';
 
+// TODO: fix
+
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const chalk = require("chalk")

@@ -1,11 +1,15 @@
 'use strict';
 
+// TODO: fix
+
 const fs = require('fs-extra')
 const { readdirSync, statSync } = require('fs-extra')
 const { join } = require('path')
 const path = require('path')
 var glob = require("glob")
 const yaml = require('js-yaml')
+const safeLoadYaml = require("./shared/load-yaml")
+
 var chalk = require('chalk');
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
@@ -52,9 +56,10 @@ async function getFunctions() {
 async function appendFunctionTemplate(functionName) {
   const templateFile = `${appDir}/functions/${functionName}/template.yaml`
   try {
-    var skeletonDoc = yaml.safeLoad(fs.readFileSync(skeletonTemplateFile, 'utf8'));
-    var functionDoc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'))
+    var skeletonDoc = await safeLoadYaml(skeletonTemplateFile);
+    var functionDoc = await safeLoadYaml(templateFile)
 
+    // TODO: not using important values?
     const functionResourceName = functionDoc["Name"]
     const functionTimeout = functionDoc["Timeout"]
     const env = functionDoc["Environment"]
@@ -88,7 +93,7 @@ async function appendFunctionTemplate(functionName) {
       addBucketEventToFunction(functionDoc, skeletonDoc)
     }
 
-    fs.writeFileSync(skeletonTemplateFile, yaml.safeDump(skeletonDoc))
+    fs.writeFileSync(skeletonTemplateFile, yaml.dump(skeletonDoc))
   }
   catch (e) {
     console.log(e);
@@ -224,11 +229,11 @@ async function addResourcesToTemplate() {
     nodir: true
   })
 
-  var skeletonDoc = yaml.safeLoad(fs.readFileSync(skeletonTemplateFile, 'utf8'));
+  var skeletonDoc = await safeLoadYaml(skeletonTemplateFile);
 
   for (const resource of resources) {
     try {
-      var resourceDoc = yaml.safeLoad(fs.readFileSync(`${resource}`, 'utf8'));
+      var resourceDoc = await safeLoadYaml(`${resource}`);
       if (skeletonDoc["Resources"] == undefined) {
         skeletonDoc["Resources"] = {}
       }
@@ -242,6 +247,6 @@ async function addResourcesToTemplate() {
       console.log(chalk.red(`${resource} is invalid`));
     }
   }
-  fs.writeFileSync(skeletonTemplateFile, yaml.safeDump(skeletonDoc))
+  fs.writeFileSync(skeletonTemplateFile, yaml.dump(skeletonDoc))
 }
 

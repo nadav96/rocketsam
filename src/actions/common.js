@@ -2,7 +2,6 @@
 
 const Q = require('q');
 const fs = require('fs-extra')
-const yaml = require('js-yaml');
 var chalk = require('chalk');
 const path = require('path')
 const meow = require('meow');

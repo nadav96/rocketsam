@@ -1,9 +1,10 @@
 'use strict';
 
 const Q = require('q');
-const { spawnSync, spawn } = require('child_process');
+const { spawn } = require('child_process');
 const path = require('path');
 const yaml = require('js-yaml')
+const safeLoadYaml = require("../shared/load-yaml")
 const fs = require('fs-extra')
 const del = require('del')
 const chalk = require('chalk')
@@ -43,8 +44,9 @@ async function buildContainer() {
     console.log("container missing, proceed to create");
     
   }
+
   
-  if (dockerVersion != 4) {
+  if (dockerVersion != 5) {
     const child = spawn('docker',
       ['build', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],
       { encoding: 'utf-8' })
@@ -70,13 +72,13 @@ async function buildContainer() {
 
 async function install(appDir, buildDir, functionName) {
   const templateFile = `${appDir}/functions/${functionName}/template.yaml`  
-  var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
+  var doc = await safeLoadYaml(templateFile);
 
   switch(doc.Runtime) {
     case "python3.7":
     case "python3.6":
       return await installPythonRequirements(appDir, buildDir, functionName, doc.Runtime)
-    case "nodejs8.10":
+    case "nodejs10.x":
       return await installNodeRequirements(appDir, buildDir, functionName)
   }
 }
@@ -97,7 +99,7 @@ async function installPythonRequirements(appDir, buildDir, functionName, runtime
     "rocketsam"
   ]
 
-  const pipCommand = [runtime, `-m`, `pip`, `install`, `-r`,
+  const pipCommand = ["python3", `-m`, `pip`, `install`, `-r`,
     `/app/functions/${functionName}/requirements.txt`,
     `-t`, `/build/.requirements/${functionName}`]
 
@@ -117,7 +119,7 @@ async function installNodeRequirements(appDir, buildDir, functionName) {
   ]
   
   const pipCommand = [`npm`, `install`, `/app/functions/${functionName}`,
-    `--prefix`, `/build/.requirements/${functionName}`]
+    `--prefix`, `/build/.requirements/${functionName}`, `--loglevel`, `error`]
 
   const fullCommand = dockerCommand.concat(pipCommand)
 

@@ -1,6 +1,7 @@
 const chalk = require("chalk")
 const path = require('path')
 const yaml = require('js-yaml')
+const safeLoadYaml = require("../shared/load-yaml")
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 const fs = require('fs-extra');
 
@@ -72,5 +73,5 @@ async function createPythonEnvFile(functionName, functionDoc, skeletonDoc, appDi
 
 
 async function getYaml(path) {
-    return yaml.safeLoad(fs.readFileSync(path, 'utf8')); 
+    return safeLoadYaml(path)
 }

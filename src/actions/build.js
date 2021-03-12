@@ -1,15 +1,14 @@
 'use strict';
 
-const Q = require('q');
 const fs = require('fs-extra')
 const zipFolder = require('folder-zip-sync')
 const { readdirSync, statSync } = require('fs-extra')
 const { join } = require('path')
 const path = require('path')
-const yaml = require('js-yaml')
+
+
 const Selector = require('node-option')
 const del = require('del')
-var dirsum = require('dirsum');
 var chalk = require('chalk');
 const meow = require('meow');
 var installUtil = require('./build/install_util')
@@ -49,7 +48,7 @@ module.exports = {
 			  textColor: 'yellow',
 			  multiselect: true,
 			});
-
+			
 			console.log("Choose which function to build")
 
 			selector.add("build all (with cache)", 1)

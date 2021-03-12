@@ -2,10 +2,11 @@
 
 const Q = require('q');
 const fs = require('fs-extra');
-const { spawnSync, spawn } = require('child_process');
+const { spawn } = require('child_process');
 const chalk = require("chalk")
 const path = require('path')
-const yaml = require('js-yaml')
+const safeLoadYaml = require("./shared/load-yaml")
+
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
 module.exports = {
@@ -20,9 +21,9 @@ async function deployProject() {
   }
 
   const outputsPath = `${settings.buildDir}/outputs.json`
-  await fs.removeSync(outputsPath)
+  fs.removeSync(outputsPath)
 
-  const params = getTemplateParams(settings)
+  const params = await getTemplateParams(settings)
   
   await samPackageProject(settings.buildDir, settings.storageBucketName, settings.storageBucketPrefix, settings.region)
   await samDeployProject(settings.buildDir, settings.stackName, settings.region, params)
@@ -94,9 +95,9 @@ function samDeployProject(buildDir, stackName, region, params) {
   return deferred.promise
 }
 
-function getTemplateParams(settings) {
+async function getTemplateParams(settings) {
   const skeletonTemplateFile = `${settings.buildDir}/template.yaml`
-  const skeletonDoc = yaml.safeLoad(fs.readFileSync(skeletonTemplateFile, 'utf8'));
+  const skeletonDoc = await safeLoadYaml(skeletonTemplateFile);
   const params = skeletonDoc["Parameters"]
 
   if (params) {

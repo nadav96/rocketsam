@@ -1,9 +1,13 @@
 'use strict';
 
+// TODO: fix
+
 const chalk = require("chalk")
 const path = require('path')
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 const yaml = require('js-yaml')
+const safeLoadYaml = require("./shared/load-yaml")
+
 const fs = require('fs-extra');
 const { spawn } = require('child_process');
 const meow = require('meow');
@@ -32,7 +36,7 @@ exports.invoke = async function (functionName) {
     
     var functionTemplateName = undefined
     try {
-        var functionTemplate = yaml.safeLoad(fs.readFileSync(templatePath, 'utf8'));
+        var functionTemplate = await safeLoadYaml(templatePath);
         functionTemplateName = functionTemplate["Name"]
     }
     catch (e) {

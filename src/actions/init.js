@@ -3,15 +3,14 @@
 const fs = require('fs-extra');
 const yaml = require('js-yaml')
 const chalk = require("chalk")
-const unzip = require('unzip');
 const path = require('path');
 var inquirer = require('inquirer');
 const AWS = require("aws-sdk")
 const meow = require('meow');
 
 
-const appDir = `${process.cwd()}`
 
+const appDir = `${process.cwd()}`
 const regions = [
 	"eu-north-1",
 	"ap-south-1",
@@ -66,9 +65,9 @@ module.exports = {
 		fs.mkdirsSync(`${appDir}/app/resources`)
 		fs.mkdirsSync(`${appDir}/app/common`)
 		
-		fs.writeFileSync(`${appDir}/app/functions/.gitkeep`)
-		fs.writeFileSync(`${appDir}/app/resources/.gitkeep`)
-		fs.writeFileSync(`${appDir}/app/common/.gitkeep`)
+		fs.writeFileSync(`${appDir}/app/functions/.gitkeep`, "")
+		fs.writeFileSync(`${appDir}/app/resources/.gitkeep`, "")
+		fs.writeFileSync(`${appDir}/app/common/.gitkeep`, "")
 		
 		const files = [
 			{ prefix: "/app", file: "template-skeleton.yaml"},

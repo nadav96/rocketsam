@@ -151,8 +151,12 @@ buildDir: $/.build
 commonDir: $/app/common
 # The resource folder path. use '$' to indicate the workspace path
 resourcesDir: $/app/resources
+
 # the bucket name which will be used to store the functions code (during deploy). must exist beforehand (rocketsam init has the option to create a new bucket)
 storageBucketName: SampleBucket
+# the prefix that will be inserted to each file pushed into the bucket (aka a folder in the bucket)
+storageBucketPrefix: SampleBucketFolderName
+
 # the stack name used in AWS Cloud Formation
 stackName: ABCD
 # the stack region

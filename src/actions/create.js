@@ -1,7 +1,6 @@
 'use strict';
 
 const fs = require('fs-extra');
-const unzip = require('unzip');
 const yaml = require('js-yaml');
 const path = require('path');
 const chalk = require("chalk")

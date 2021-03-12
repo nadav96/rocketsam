@@ -2,6 +2,8 @@
 
 const fs = require('fs-extra');
 const yaml = require('js-yaml')
+const safeLoadYaml = require("./shared/load-yaml")
+
 const chalk = require("chalk")
 const path = require('path');
 var inquirer = require('inquirer');
@@ -78,8 +80,9 @@ module.exports = {
 		for (var i = 0; i < files.length; i++) {
 			const filePath = `${templateDir}/${files[i].file}`
 			try {
-				await fs.copyFileSync(filePath,
-					`${appDir}${files[i].prefix}/${files[i].file}`, [fs.constants.COPYFILE_EXCL]);
+				fs.copyFileSync(filePath,
+					`${appDir}${files[i].prefix}/${files[i].file}`, fs.constants.COPYFILE_EXCL);
+
 			}
 			catch (e) {
 				console.log(`${files[i].file} already exists`);
@@ -87,16 +90,16 @@ module.exports = {
 		}
 
 		const rocketsamConfig = `${appDir}${files[1].prefix}/${files[1].file}`
-		var rocketsamConfigYaml = yaml.safeLoad(fs.readFileSync(rocketsamConfig, 'utf8'));
+
+		var rocketsamConfigYaml = await safeLoadYaml(rocketsamConfig)
 
 		rocketsamConfigYaml["storageBucketName"] = bucketName
 		rocketsamConfigYaml["stackName"] = stackName
 		rocketsamConfigYaml["region"] = region
 
-		await fs.writeFileSync(rocketsamConfig, yaml.safeDump(rocketsamConfigYaml))
+		fs.writeFileSync(rocketsamConfig, yaml.dump(rocketsamConfigYaml))
 
 		console.log(chalk.green("Created rocketsam project"));
-		
 	}
 }
 

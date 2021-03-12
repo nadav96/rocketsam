@@ -2,6 +2,8 @@
 
 const fs = require('fs-extra')
 const yaml = require('js-yaml');
+const safeLoadYaml = require("./shared/load-yaml")
+
 var chalk = require('chalk');
 const path = require('path')
 const meow = require('meow');
@@ -71,7 +73,7 @@ function getCli() {
 
 async function addBucket(bucketName) {
   const templateFile = `${appDir}/template-skeleton.yaml`
-  var doc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'));
+  var doc = await safeLoadYaml(templateFile);
   doc["Parameters"] = {
     bucketName: {
       Type: "String",
@@ -88,13 +90,13 @@ async function addBucket(bucketName) {
     }
   }
 
-  fs.writeFileSync(templateFile, yaml.safeDump(doc))
+  fs.writeFileSync(templateFile, yaml.dump(doc))
 }
 
 async function addEventToFunction(eventType, functionName, endpoint) {
   const templateFile = `${appDir}/functions/${functionName}/template.yaml`
   try {
-    var functionDoc = yaml.safeLoad(fs.readFileSync(templateFile, 'utf8'))
+    var functionDoc = await safeLoadYaml(templateFile);
 
     switch (eventType) {
       case "api":
@@ -128,7 +130,7 @@ async function addEventToFunction(eventType, functionName, endpoint) {
         break
     }
 
-    fs.writeFileSync(templateFile, yaml.safeDump(functionDoc))
+    fs.writeFileSync(templateFile, yaml.dump(functionDoc))
   }
   catch (e) {
     console.log(chalk.red(`function ${functionName} not found`));

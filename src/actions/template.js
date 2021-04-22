@@ -40,7 +40,7 @@ async function createTemplate() {
   await fs.mkdirsSync(`${buildDir}`)
   await fs.copyFileSync(`${appDir}/template-skeleton.yaml`, skeletonTemplateFile)
 
-  addResourcesToTemplate()
+  await addResourcesToTemplate()
 
   const functions = await getFunctions()
   for (var i = 0; i < functions.length; i++) {

@@ -7,6 +7,7 @@ const fs = require('fs');
 const chalk = require("chalk")
 const path = require('path')
 const AWS = require("aws-sdk")
+var inquirer = require('inquirer');
 var settingsParser = require(`${path.dirname(require.main.filename)}/src/settings.js`)
 
 
@@ -14,9 +15,26 @@ module.exports = {
   remove: async function() {
     const settings = await settingsParser()
     if (settings == undefined) {
-      console.log(chalk.red("Project not configured, aborting create"));
+      console.log(chalk.red("Project not configured, aborting remove"));
       return
     }
+
+    const answers = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'value',
+        message: 'Are you sure you want to remove the entire project?:',
+        choices: [
+          "NO",
+          "yes"
+        ]
+      }
+      ])
+    const choice = answers['value']
+    if (choice == "NO") {
+      console.log(chalk.blueBright("Aborting removal."));
+      return
+    } 
 
     AWS.config.update({region: settings.region});
     var cloudformation = new AWS.CloudFormation();

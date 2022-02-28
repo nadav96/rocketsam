@@ -1,6 +1,6 @@
 {
   "name": "rocketsam",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A CLI made to build and deploy microservices in AWS",
   "main": "index.js",
   "repository": {

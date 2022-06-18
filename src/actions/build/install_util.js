@@ -22,7 +22,7 @@ async function version() {
     { encoding: 'utf-8' })
   
   child.stdout.on('data', function(code) {
-    deferred.resolve(code)
+    deferred.resolve(`${code}`.replace("\n", ""))
   })
 
   child.stderr.on('data', function(error) {
@@ -45,7 +45,6 @@ async function buildContainer() {
     
   }
 
-  
   if (dockerVersion != 5) {
     const child = spawn('docker',
       ['build', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],
@@ -74,12 +73,11 @@ async function install(appDir, buildDir, functionName) {
   const templateFile = `${appDir}/functions/${functionName}/template.yaml`  
   var doc = await safeLoadYaml(templateFile);
 
-  switch(doc.Runtime) {
-    case "python3.7":
-    case "python3.6":
-      return await installPythonRequirements(appDir, buildDir, functionName, doc.Runtime)
-    case "nodejs10.x":
-      return await installNodeRequirements(appDir, buildDir, functionName)
+  if (doc.Runtime.startsWith("python")) {
+    return await installPythonRequirements(appDir, buildDir, functionName, doc.Runtime)
+  }
+  else if (doc.Runtime.startsWith("nodejs")) {
+    return await installNodeRequirements(appDir, buildDir, functionName)
   }
 }
 

@@ -30,7 +30,11 @@ module.exports = {
 				  name: 'value',
 				  message: 'select runtime:',
 				  choices: [
+					  "nodejs16.x",
+					  "nodejs14.x",
+					  "nodejs12.x",
 					  "nodejs10.x",
+					  "python3.9",
 					  "python3.6",
 					  "python3.7"
 				  ]

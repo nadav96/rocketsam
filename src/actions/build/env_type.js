@@ -21,9 +21,7 @@ exports.buildEnvFile = async function(functionName) {
     const functionDoc = await getYaml(`${settings.appDir}/functions/${functionName}/template.yaml`)
     const skeletonDoc = await getYaml(`${settings.appDir}/template-skeleton.yaml`)
 
-    switch(functionDoc.Runtime) {
-      case "python3.7":
-      case "python3.6":
+    if (functionDoc.Runtime.startsWith("python")) {
         return await createPythonEnvFile(functionName, functionDoc, skeletonDoc, settings.appDir)
     }
 }

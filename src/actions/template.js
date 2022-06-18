@@ -39,7 +39,6 @@ module.exports = {
 async function createTemplate() {
   await fs.mkdirsSync(`${buildDir}`)
   await fs.copyFileSync(`${appDir}/template-skeleton.yaml`, skeletonTemplateFile)
-
   await addResourcesToTemplate()
 
   const functions = await getFunctions()
@@ -230,7 +229,6 @@ async function addResourcesToTemplate() {
   })
 
   var skeletonDoc = await safeLoadYaml(skeletonTemplateFile);
-
   for (const resource of resources) {
     try {
       var resourceDoc = await safeLoadYaml(`${resource}`);

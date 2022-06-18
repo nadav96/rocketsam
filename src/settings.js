@@ -22,7 +22,7 @@ async function parseSettings() {
     }
     catch (e) {
       console.log(chalk.red("One of the required feilds of the rocketsam.yaml file is missing, please refer to the readme for more info"));
-      
+      process.exit(1)
       return undefined
     }
   } else {

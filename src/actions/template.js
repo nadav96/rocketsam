@@ -16,6 +16,7 @@ var settingsParser = require(`${path.dirname(require.main.filename)}/src/setting
 var appDir = undefined
 var buildDir = undefined
 var resourcesDir = undefined
+var policiesDir = undefined
 var skeletonTemplateFile = undefined
 
 module.exports = {
@@ -25,6 +26,7 @@ module.exports = {
         appDir = settings.appDir
         buildDir = settings.buildDir
         resourcesDir = settings.resourcesDir
+        policiesDir = settings.policiesDir
         skeletonTemplateFile = `${buildDir}/template.yaml`
     }
     else {
@@ -41,9 +43,11 @@ async function createTemplate() {
   await fs.copyFileSync(`${appDir}/template-skeleton.yaml`, skeletonTemplateFile)
   await addResourcesToTemplate()
 
+  const policies = await getGlobalPolicies()
+
   const functions = await getFunctions()
   for (var i = 0; i < functions.length; i++) {
-    await appendFunctionTemplate(functions[i])
+    await appendFunctionTemplate(functions[i], policies)
   }  
 }
 
@@ -52,7 +56,7 @@ async function getFunctions() {
   return await dirsFunction(`${appDir}/functions`)
 }
 
-async function appendFunctionTemplate(functionName) {
+async function appendFunctionTemplate(functionName, globalPolicies) {
   const templateFile = `${appDir}/functions/${functionName}/template.yaml`
   try {
     var skeletonDoc = await safeLoadYaml(skeletonTemplateFile);
@@ -69,6 +73,13 @@ async function appendFunctionTemplate(functionName) {
       Runtime: "python3.6",
       Timeout: 10,
       Events: {}
+    }
+
+    if (functionDoc["Policies"] == undefined) {
+      functionDoc["Policies"] = globalPolicies
+    }
+    else {
+      functionDoc["Policies"] = functionDoc["Policies"].concat(globalPolicies)
     }
 
     const mergedFunctionPropertiesDoc = Object.assign(staticFunctionPropertiesDoc, functionDoc)
@@ -221,6 +232,63 @@ function addBucketEventToFunction(functionDoc, skeletonDoc) {
   }
 
   return addBucketEventToFunction
+}
+
+async function getGlobalPolicies() {
+  const policies = glob.sync(`${policiesDir}/**/*.yaml`, {
+    nodir: true
+  })
+
+  var resultPolicies = []
+
+  for (const policy of policies) {
+    try {
+      var policyDoc = await safeLoadYaml(`${policy}`);
+      if (policyDoc["Policies"] == undefined) {
+        console.log(`* ${chalk.red("Global policy missing 'Policies' header")} ${policy}`);
+      }
+      else if (!Array.isArray(policyDoc["Policies"])) {
+        console.log(`* ${chalk.red("Global policy should be an array of policies under 'Policies' header")} ${policy}`);
+      }
+      else {
+        for (var p of policyDoc["Policies"]) {
+          if (isValidPolicy(p)) {
+            // good sub policy, add to array
+            resultPolicies.push(p)
+          }
+          else {
+            console.log(`* ${chalk.red("Global policy contain invalid policy in the array")} ${policy}`);
+            console.log();
+            console.log(yaml.dump(p));
+          }
+        }
+      }
+    }
+    catch (e) {
+      console.log(`${chalk.red("Global policy is invalid")} ${policy}`);
+    }
+  }
+  return resultPolicies
+}
+
+function isValidPolicy(policyDoc) {
+  const isRootValid = policyDoc["Version"] != undefined && Array.isArray(policyDoc["Statement"])
+
+  if (!isRootValid) {
+    return false
+  }
+
+  const items = policyDoc["Statement"]
+  for (var item of items) {
+    const isItemValid = item["Effect"] != undefined 
+                        && Array.isArray(item["Action"]) 
+                        && Array.isArray(item["Resource"])
+    if (!isItemValid) {
+      return false
+    }
+  }
+
+  return true
 }
 
 async function addResourcesToTemplate() {

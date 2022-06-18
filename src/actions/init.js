@@ -65,10 +65,12 @@ module.exports = {
 
 		fs.mkdirsSync(`${appDir}/app/functions`)
 		fs.mkdirsSync(`${appDir}/app/resources`)
+		fs.mkdirsSync(`${appDir}/app/policies`)
 		fs.mkdirsSync(`${appDir}/app/common`)
 		
 		fs.writeFileSync(`${appDir}/app/functions/.gitkeep`, "")
 		fs.writeFileSync(`${appDir}/app/resources/.gitkeep`, "")
+		fs.writeFileSync(`${appDir}/app/policies/.gitkeep`, "")
 		fs.writeFileSync(`${appDir}/app/common/.gitkeep`, "")
 		
 		const files = [

@@ -2,6 +2,7 @@ appDir: $/app
 buildDir: $/.build
 commonDir: $/app/common
 resourcesDir: $/app/resources
+policiesDir: $/app/policies
 storageBucketName: SampleBucket
 storageBucketPrefix: ""
 stackName: ABCD

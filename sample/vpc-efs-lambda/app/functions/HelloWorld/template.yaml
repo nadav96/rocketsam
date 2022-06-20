@@ -1,0 +1,45 @@
+Name: HelloWorldFunction
+Timeout: 10
+Environment:
+  Variables:
+    demo: 1
+Runtime: python3.7
+VpcConfig:
+  SecurityGroupIds:
+    - Fn::GetAtt: MountTargetVPC.DefaultSecurityGroup
+  SubnetIds:
+    - Ref: MountTargetSubnetOne
+FileSystemConfigs:
+  - Arn:
+      Fn::GetAtt: AccessPointResource.Arn
+    LocalMountPath: /mnt/efs
+Policies:
+  - Statement:
+      - Sid: AWSLambdaVPCAccessExecutionRole
+        Effect: Allow
+        Action:
+          - logs:CreateLogGroup
+          - logs:CreateLogStream
+          - logs:PutLogEvents
+          - ec2:CreateNetworkInterface
+          - ec2:DescribeNetworkInterfaces
+          - ec2:DeleteNetworkInterface
+        Resource: '*'
+      - Sid: AmazonElasticFileSystemClientFullAccess
+        Effect: Allow
+        Action:
+          - elasticfilesystem:ClientMount
+          - elasticfilesystem:ClientRootAccess
+          - elasticfilesystem:ClientWrite
+          - elasticfilesystem:DescribeMountTargets
+        Resource: '*'
+Tags:
+  # SUPER IMPORTANT, THIS FORCE CREATION ORDER 
+  # (MountTargetResource1 => HelloWorldFunction)
+  mountTargetKey:
+    Ref: MountTargetResource1
+    
+SammyApiEvent:
+  authorizerName: null
+  path: /HelloWorld
+  method: get

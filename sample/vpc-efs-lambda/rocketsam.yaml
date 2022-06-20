@@ -1,0 +1,9 @@
+appDir: $/app
+buildDir: $/.build
+commonDir: $/app/common
+resourcesDir: $/app/resources
+policiesDir: $/app/policies
+storageBucketName: code.nadav
+storageBucketPrefix: ''
+stackName: vpc-efs-sample
+region: eu-west-1

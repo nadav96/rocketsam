@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: sammy app
+
+Globals:
+    Function:
+        Timeout: 3
+        Environment:
+          Variables:
+            aws_environment: cloud
+
+Resources:
+  MountTargetVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.31.0.0/16
+      EnableDnsHostnames: True
+      EnableDnsSupport: True      
+ 
+  MountTargetSubnetOne:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.31.1.0/24
+      VpcId:  
+        Ref: MountTargetVPC
+      AvailabilityZone: "eu-west-1a"
+
+  FileSystemResource:
+    Type: 'AWS::EFS::FileSystem'
+    Properties:
+      PerformanceMode: generalPurpose
+      Encrypted: true
+      FileSystemTags:
+        - Key: Name
+          Value: TestFileSystem
+      FileSystemPolicy:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "elasticfilesystem:ClientMount"
+            Principal:
+              AWS: "*"
+
+  MountTargetResource1:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: 
+        Ref: FileSystemResource
+      SubnetId: 
+        Ref: MountTargetSubnetOne
+      SecurityGroups:
+      - Fn::GetAtt: MountTargetVPC.DefaultSecurityGroup
+
+  AccessPointResource:
+    Type: 'AWS::EFS::AccessPoint'
+    Properties:
+      FileSystemId: 
+        Ref: FileSystemResource
+      PosixUser:
+        Uid: "1000"
+        Gid: "1000"
+      RootDirectory:
+        CreationInfo:
+          OwnerGid: "1000"
+          OwnerUid: "1000"
+          Permissions: "0777"
+        Path: "/myefs"
+
+Outputs:
+  vpcId:
+    Description: VPC ID
+    Value: 
+      Ref: MountTargetVPC
+  subnetId:
+    Description: Private Subnet A ID
+    Value: 
+      Ref: MountTargetSubnetOne
+  fileSystemId:
+    Description: File system ID
+    Value: 
+      Ref: FileSystemResource
+  mountTargetId:
+    Description: Mount point A ID
+    Value: 
+      Ref: MountTargetResource1
+  accessPointArn:
+    Description: Access point ARN
+    Value: 
+     Fn::GetAtt: AccessPointResource.Arn

@@ -35,7 +35,7 @@
     "meow": "^9.0.0",
     "node-option": "0.0.6",
     "q": "^1.5.1",
-    "update-notifier": "^5.1.0"
+    "update-notifier": "^6.0.2"
   },
   "bin": {
     "rocketsam": "./index.js"

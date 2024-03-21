@@ -26,7 +26,7 @@ async function deployProject() {
   const params = await getTemplateParams(settings)
   
   await samPackageProject(settings.buildDir, settings.storageBucketName, settings.storageBucketPrefix, settings.region)
-  await samDeployProject(settings.buildDir, settings.stackName, settings.region, params)
+  await samDeployProject(settings.buildDir, settings.stackName, settings.region, params, settings.storageBucketName)
 }
 
 function samPackageProject(buildDir, storageBucketName, prefix, region) {
@@ -63,13 +63,15 @@ function samPackageProject(buildDir, storageBucketName, prefix, region) {
   return deferred.promise
 }
 
-function samDeployProject(buildDir, stackName, region, params) {
+function samDeployProject(buildDir, stackName, region, params, storageBucketName) {
   var deferred = Q.defer();
 
+  console.log("bucket: ", storageBucketName);
   var command = ["deploy",
     "--template-file", `${buildDir}/.packaged.yaml`,
     "--stack-name", stackName,
     "--capabilities","CAPABILITY_IAM",
+    "--s3-bucket", storageBucketName,
     "--region", region
   ]
 

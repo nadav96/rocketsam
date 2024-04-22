@@ -163,7 +163,6 @@ async function copyRequirementsToFunction(buildDir, functionName) {
         try {
           fs.symlinkSync(src, dst)
         } catch (err) {
-            console.error('Failed to create symlink:', err);
         }
       }
       else {

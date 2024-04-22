@@ -159,9 +159,17 @@ async function copyRequirementsToFunction(buildDir, functionName) {
 
       // It will symlink the folder files
       // and the zip will convert them to the appropriate files
-      fs.symlinkSync(src, dst)
+      if (!requirements[i].includes("urllib3")) {
+        try {
+          fs.symlinkSync(src, dst)
+        } catch (err) {
+            console.error('Failed to create symlink:', err);
+        }
+      }
+      else {
+        console.log("SKIPPING URLLIB3: ", requirements[i]);
+      }
     }
-
   }
   catch (e) {
   }

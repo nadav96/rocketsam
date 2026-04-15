@@ -23,7 +23,9 @@ var commonDir = undefined
 
 module.exports = {
 	build: async function(option) {
-		const populate = getCli().flags.populate
+		const flags = getCli().flags
+		const populate = flags.populate
+		const dryRun = flags.dryRun
 
 		const settings = await settingsParser()
 		if (settings != undefined) {
@@ -35,6 +37,10 @@ module.exports = {
 			console.log(chalk.red("Project not configured, aborting build"));
 			return
 		}		
+
+		if (dryRun) {
+			console.log(chalk.cyan("\n=== DRY RUN MODE === (no changes will be persisted)\n"));
+		}
 
 		const dirsFunction = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory())
 
@@ -67,15 +73,20 @@ module.exports = {
 			}
 		}
 		if (result.includes(1)) {
-			await parseOptionResults(dirs, populate)
+			await parseOptionResults(dirs, populate, dryRun)
 		}
 		else {
-			await parseOptionResults(result, populate)
+			await parseOptionResults(result, populate, dryRun)
 		}
 
-		console.log(chalk.yellow("\ntemplate:"));
-		
-		await templateCreation.createTemplate()		
+		if (dryRun) {
+			console.log(chalk.cyan("\ntemplate: (skipped in dry run)"));
+			console.log(chalk.cyan("\n=== DRY RUN COMPLETE ==="));
+		}
+		else {
+			console.log(chalk.yellow("\ntemplate:"));
+			await templateCreation.createTemplate()
+		}
 	}
 }
 
@@ -85,13 +96,19 @@ function getCli() {
 			populate: {
 				type: 'boolean',
 				alias: 'p'
+			},
+			dryRun: {
+				type: 'boolean',
+				alias: 'd'
 			}
 		}
 	})
 }
 
-async function parseOptionResults(results, populate) {
-	await installUtil.buildContainer()
+async function parseOptionResults(results, populate, dryRun) {
+	if (!dryRun) {
+		await installUtil.buildContainer()
+	}
 
 	for (var i = 0; i < results.length; i++) {
 		var functionFilePath = `${appDir}/functions/${results[i]}`
@@ -111,7 +128,7 @@ async function parseOptionResults(results, populate) {
 
 		await envBuilder.buildEnvFile(results[i])
 
-		await functionBuildFolder(results[i], [])		
+		await functionBuildFolder(results[i], [], dryRun)		
 	};
 }
 
@@ -194,7 +211,7 @@ async function populateFunctionCommonFolder(functionName, dependencies, location
 	}
 }
 
-async function functionBuildFolder(functionName, dependencies) {
+async function functionBuildFolder(functionName, dependencies, dryRun) {
 	const functionBuildFolder = `${buildDir}/functions/${functionName}`
 	const functionAppFolder = `${appDir}/functions/${functionName}`
 
@@ -227,15 +244,25 @@ async function functionBuildFolder(functionName, dependencies) {
 		if (newHash.requirements != oldHash.requirements) {
 			console.log(chalk.green("(m) requirements"))
 
-			installResult = await installUtil.install(appDir, buildDir, functionName)
-			installUtil.copyRequirementsToFunction(buildDir, functionName)
+			if (dryRun) {
+				console.log(chalk.cyan("    [dry run] would install dependencies"))
+			}
+			else {
+				installResult = await installUtil.install(appDir, buildDir, functionName)
+				installUtil.copyRequirementsToFunction(buildDir, functionName)
 
-			newHash = await hashUtil.calculateHashForDirectoy(functionBuildFolder)
+				newHash = await hashUtil.calculateHashForDirectoy(functionBuildFolder)
+			}
 		}
 
 		if (installResult) {
-			await zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
-			await hashUtil.putHashesForFunction(buildDir, functionName, newHash)
+			if (dryRun) {
+				console.log(chalk.cyan("    [dry run] would zip and update hashes"))
+			}
+			else {
+				await zipFolder(functionBuildFolder, `${functionBuildFolder}.zip`, [])
+				await hashUtil.putHashesForFunction(buildDir, functionName, newHash)
+			}
 		}
 	}
 	else {

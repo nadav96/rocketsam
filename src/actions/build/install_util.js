@@ -18,7 +18,7 @@ module.exports = {
 async function version() {
   var deferred = Q.defer();
 
-  const child = spawn('docker', ['run', 'rocketsam', 'cat', '/v.txt'],
+  const child = spawn('docker', ['run', '--platform', 'linux/amd64', 'rocketsam', 'cat', '/v.txt'],
     { encoding: 'utf-8' })
   
   child.stdout.on('data', function(code) {
@@ -47,7 +47,7 @@ async function buildContainer() {
 
   if (dockerVersion != 5) {
     const child = spawn('docker',
-      ['build', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],
+      ['build', '--platform', 'linux/amd64', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],
       { encoding: 'utf-8' })
     
     child.stdout.on('data', function(code) {
@@ -92,6 +92,7 @@ async function installPythonRequirements(appDir, buildDir, functionName, runtime
   await del([`${buildDir}/.requirements/${functionName}/*`]);
 
   const dockerCommand = ["run",
+    "--platform", "linux/amd64",
     "-v", `${appDir}:/app`,
     "-v", `${buildDir}:/build`,
     "rocketsam"
@@ -111,6 +112,7 @@ async function installNodeRequirements(appDir, buildDir, functionName) {
   await del([`${buildDir}/.requirements/${functionName}/*`]);
 
   const dockerCommand = ["run",
+    "--platform", "linux/amd64",
     "-v", `${appDir}:/app`,
     "-v", `${buildDir}:/build`,
     "rocketsam"

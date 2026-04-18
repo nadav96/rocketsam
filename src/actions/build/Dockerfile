@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM --platform=linux/amd64 ubuntu:latest
 RUN echo '5' > /v.txt
 
 RUN apt-get update --fix-missing

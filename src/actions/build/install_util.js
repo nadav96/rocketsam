@@ -47,7 +47,7 @@ async function buildContainer() {
 
   if (dockerVersion != 5) {
     const child = spawn('docker',
-      ['build', '--platform', 'linux/amd64', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],
+      ['build', '--platform', 'linux/amd64', '--quiet', '-t', 'rocketsam', `${scriptPath}/src/actions/build`],
       { encoding: 'utf-8' })
     
     child.stdout.on('data', function(code) {
@@ -55,7 +55,7 @@ async function buildContainer() {
     })
 
     child.stderr.on('data', function(error) {
-      process.stderr.write(chalk.red(error));
+      process.stderr.write(error);
     })
 
     child.on('close', function(code) {
